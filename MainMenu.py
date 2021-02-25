@@ -65,7 +65,7 @@ def options_menu():
 	#menu = pm.Menu(500, 500, 'The Ship Predicament', theme=pm.themes.THEME_DARK)
 
 	#menu.add_text_input('Name :', default='John Doe')
-	menu.add_selector('Color :', [('Red', 1), ('Blue', 2), ('Green', 3)], onreturn=set_color, font_color=color)
+	menu.add_selector('Text Color :', [('Red', 1), ('Blue', 2), ('Green', 3)], onreturn=set_color, font_color=color)
 	menu.add_button('Back to Main Menu', main_menu, font_color=color)
 
 	menu.mainloop(surface)
