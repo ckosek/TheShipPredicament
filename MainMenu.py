@@ -52,7 +52,7 @@ def main_menu():
 	menu.add_selector('Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 3)], onchange=set_difficulty, font_color=color)
 	menu.add_button('Play', start_the_game, font_color=color)
 	menu.add_button('Options', options_menu, font_color=color)
-	menu.add_button('Quit', pm.events.EXIT, font_color=color)
+	menu.add_button('Exit', pm.events.EXIT, font_color=color)
 
 	menu.mainloop(surface)
 
