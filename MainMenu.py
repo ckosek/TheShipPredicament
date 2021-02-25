@@ -5,20 +5,26 @@ import pygame as pg
 import pygame_menu as pm
 
 color = (255,50,50)
+color_default = 0
 
 def set_color(name, value):
 	global color
+	global color_default
+	# Changes color to options value selection
 	if value == 1:
-		color = (255,50,50)
+		color = (255,50,50) #RED
+		color_default = value-1
 		options_menu()
 	if value == 2:
-		color = (0,0,255)
+		color = (0,0,255) #BLUE
+		color_default = value-1
 		options_menu()
 	if value == 3:
-		color = (0,255,0)
+		color = (0,255,0) #GREEN
+		color_default = value-1
 		options_menu()
 	else:
-		color = (255,50,50)
+		color = (255,50,50) #RED BACKUP
 		options_menu()
 
 def main_menu():
@@ -65,9 +71,10 @@ def options_menu():
 	#menu = pm.Menu(500, 500, 'The Ship Predicament', theme=pm.themes.THEME_DARK)
 
 	#menu.add_text_input('Name :', default='John Doe')
-	menu.add_selector('Text Color :', [('Red', 1), ('Blue', 2), ('Green', 3)], onreturn=set_color, font_color=color)
+	menu.add_selector('Text Color :', [('Red', 1), ('Blue', 2), ('Green', 3)], default=color_default, onreturn=set_color, font_color=color)
 	menu.add_button('Back to Main Menu', main_menu, font_color=color)
 
+	pg.display.update()
 	menu.mainloop(surface)
 
 if __name__ == '__main__':
