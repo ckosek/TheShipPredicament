@@ -12,6 +12,10 @@ from pygame_menu import sound
 #Set surface as Fullscreen Display
 surface = pg.display.set_mode((0,0),pg.FULLSCREEN)
 
+#Used for debugging
+#Note: Do not actually resize the window, this may cause window errors
+#surface = pg.display.set_mode((700,700),pg.RESIZABLE)
+
 #Color List for quick reference
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -38,6 +42,10 @@ color_default = 0
 back_color = BLACK
 back_color_default = 0
 
+#Volume set for sounds
+volume_level = 0.2
+volume_default = 2
+
 #---------------------
 #Methods/Functions
 #---------------------
@@ -61,6 +69,7 @@ def set_color(name, value):
 		options_menu()
 	else:
 		color = RED #RED BACKUP
+		color_default = 0
 		options_menu()
 
 #Method: sets color of background based on input
@@ -112,15 +121,32 @@ def create_sound_engine():
 	engine.set_sound(sound.SOUND_TYPE_WIDGET_SELECTION, sound.SOUND_EXAMPLE_WIDGET_SELECTION)
 	return engine
 
-#Method: Sets the volume level for the sound engine
-def set_volume(name, value):
-	pass
+
+#Method: Begins background music play, stops upon exiting the game
+def background_music_loop():
+	global volume_level
+	pg.init()
+	pg.mixer.music.load('MusicGameplay.ogg')
+	pg.mixer.music.set_volume(volume_level)
+	pg.mixer.music.play(-1) #loops forevever while game is up
+
+#Method: Sets the volume level and default for the sound engine
+#Note: volume levels are only set between 0.0 and 1.0
+def set_volume_level(name, value):
+	global volume_level
+	global volume_default
+	volume_level = value * 0.1
+	volume_default = value
+	pg.init()
+	pg.mixer.music.stop()
+	background_music_loop()
+	options_menu()
 
 #Method: Sets the items to be used by the options menu volume selector
 def set_volume_items():
 	volume_int_list = []
 	volume_str_list = []
-	volume_int_list = [i for i in range(0,101)]
+	volume_int_list = [i for i in range(0,11)]
 	for a in volume_int_list:
 		a = str(a)
 		volume_str_list.append(a)
@@ -128,17 +154,17 @@ def set_volume_items():
 	return volume_items
 
 #Method: Sets the difficulty level for Single Player games
-def set_difficulty(value, difficulty):
+def set_difficulty(name, value):
 	# Do the job here !
 	pass
 
 #Method: Sets the number of players, 1 or 2
-def set_players(value, difficulty):
+def set_players(name, value):
 	# Do the job here !
 	pass
 
 #Method: Sets the grid size to use during play
-def set_grid_size(value, difficulty):
+def set_grid_size(name, value):
 	# Do the job here !
 	pass
 
@@ -161,7 +187,6 @@ def main_menu():
 
 	menu = pm.Menu(700, 700, 'The Ship Predicament', theme=mytheme)
 
-	#menu.add_image('C:\\Users\Alex McDonald\Desktop\CSE 550\warships-uss-new-jersey-bb-62-battleship-hd-wallpaper-preview.jpg')
 	menu.add_button('Play', play_menu, font_color=color)
 	menu.add_button('Options', options_menu, font_color=color)
 	menu.add_button('Exit', pm.events.EXIT, font_color=color)
@@ -177,6 +202,7 @@ def options_menu():
 	global surface
 	global color
 	global back_color
+	global volume_default
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
@@ -187,15 +213,18 @@ def options_menu():
 	options_sub.add_label('Press Enter To')
 	options_sub.add_label('Apply Selected Item')
 	options_sub.add_vertical_margin(30)
-	options_sub.add_selector('Volume ', volume_items, onchange=set_volume, font_color=color)
+	options_sub.add_selector('Music Volume ', volume_items, default=volume_default, onreturn=set_volume_level, font_color=color)
 	options_sub.add_selector('Text Color ', [('Red', 1), ('Blue', 2), ('Green', 3)], default=color_default, onreturn=set_color, font_color=color)
 	options_sub.add_selector('Background ', [('Black', 1), ('White', 2), ('Gray', 3)], default=back_color_default, onreturn=set_background, font_color=color)
 	options_sub.add_vertical_margin(50)
 	options_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
 	options_sub.set_sound(sound_engine)
-
+	
 	options_sub.mainloop(surface)
 
+#--------------------------
+# Play Menu
+#--------------------------
 def play_menu():
 	pg.init()
 	global surface
@@ -220,5 +249,9 @@ def play_menu():
 
 	play_sub.mainloop(surface)
 
+#--------------------------
+# Main Statement
+#--------------------------
 if __name__ == '__main__':
+	background_music_loop()
 	main_menu()
