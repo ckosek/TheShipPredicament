@@ -114,7 +114,8 @@ def set_theme():
 	pg.init()
 	screen_res = pg.display.Info()
 	w = screen_res.current_w
-	new_w_offset = w/4
+	new_w_offset = w/2
+	new_w_offset = new_w_offset - len("The Ship Predicament")/0.0625
 
 	eight_bit_font = pm.font.FONT_8BIT
 	title_theme = pm.widgets.MENUBAR_STYLE_NONE
