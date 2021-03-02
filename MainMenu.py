@@ -279,6 +279,10 @@ def start_the_game():
 			if event.type == pg.QUIT:  # If user clicked close
 				done = True  # Flag that we are done so we exit this loop
 				main_menu()
+			elif event.type == pg.KEYDOWN:
+				if event.key == pg.K_ESCAPE:
+					done = True
+					main_menu()
 			elif event.type == pg.MOUSEBUTTONDOWN:
 				# User clicks the mouse. Get the position
 				pos = pg.mouse.get_pos()
