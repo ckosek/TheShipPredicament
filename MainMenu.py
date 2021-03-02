@@ -120,7 +120,7 @@ def set_theme():
 		
 	current_theme = pm.themes.Theme(background_color=back_color, widget_font=eight_bit_font, title_bar_style=title_theme, 
 							menubar_close_button=True, title_font=eight_bit_font, title_font_color=color, 
-							title_font_size=font_size, selection_color=select_box_color)
+							title_font_size=font_size, title_offset=(300,0), selection_color=select_box_color)
 	return current_theme
 
 #Method: Creates the sound engine used with menus and gameplay
@@ -245,8 +245,6 @@ def set_grid_size(name, value):
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 
-
-
 #--------------------------
 # Actual Game
 #--------------------------
@@ -266,9 +264,7 @@ def start_the_game():
 		grid.append([])
 		for column in range(grid_size):
 			grid[row].append(0)  # Append a cell
-	# Set row 1, cell 5 to one. (Remember rows and
-	# column numbers start at zero.)
-	grid[1][5] = 1
+
 	# Used to manage how fast the surface updates
 	clock = pg.time.Clock()
 	global surface
@@ -294,16 +290,18 @@ def start_the_game():
 				print("Click ", pos, "Grid coordinates: ", row, column)
 
 		# Set the surface background
-		surface.fill(BLACK)
+		surface.fill(back_color)
 
 		# Draw the grid
 		for row in range(grid_size):
 			for column in range(grid_size):
-				color = WHITE
+				square_color = WHITE
+				if back_color == WHITE:
+					square_color = BLACK
 				if grid[row][column] == 1:
-					color = GREEN
+					square_color = NAVY
 				pg.draw.rect(surface,
-								color,
+								square_color,
 								[(MARGIN + WIDTH) * column + MARGIN,
 								(MARGIN + HEIGHT) * row + MARGIN,
 								WIDTH,
@@ -313,8 +311,6 @@ def start_the_game():
 		clock.tick(60)
 		# Go ahead and update the surface with what we've drawn.
 		pg.display.update()
-	
-
 
 #--------------------------
 # Main Menu
@@ -324,11 +320,14 @@ def main_menu():
 	global surface
 	global color
 	global back_color
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	menu = pm.Menu(700, 700, 'The Ship Predicament', theme=mytheme)
+	menu = pm.Menu(h, w, 'The Ship Predicament', theme=mytheme)
 
 	menu.add_button('Play', play_menu, font_color=color)
 	menu.add_button('Options', options_menu, font_color=color)
@@ -347,11 +346,15 @@ def options_menu():
 	global back_color
 	global volume_default
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 	volume_items = set_volume_items()
 	
-	options_sub = pm.Menu(700, 700, 'Options', theme=mytheme)
+	options_sub = pm.Menu(h, w, 'Options', theme=mytheme)
 
 	options_sub.add_label('Press Enter To')
 	options_sub.add_label('Apply Selected Item')
@@ -374,10 +377,14 @@ def play_menu():
 	global color
 	global back_color
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	play_setting_sub = pm.Menu(700, 700, 'Confirm Settings', theme=mytheme)
+	play_setting_sub = pm.Menu(h, w, 'Confirm Settings', theme=mytheme)
 
 	play_setting_sub.add_label(player_str)
 	play_setting_sub.add_label(difficulty_str)
@@ -387,7 +394,7 @@ def play_menu():
 	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
 	play_setting_sub.set_sound(sound_engine)
 
-	play_sub = pm.Menu(700, 700, 'Game Setup', theme=mytheme)
+	play_sub = pm.Menu(h, w, 'Game Setup', theme=mytheme)
 
 	play_sub.add_label('Press Enter To')
 	play_sub.add_label('Apply Selected Item')
