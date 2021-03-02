@@ -58,7 +58,7 @@ difficulty_str = 'Difficulty: Easy :'
 
 #Grid size set for play menu
 grid_size = 10
-grid_default = 0
+grid_default = 1
 grid_str = 'Grid Size: 10 x 10 :'
 
 #---------------------
@@ -224,31 +224,93 @@ def set_grid_size(name, value):
 	global grid_default
 	global grid_str
 
+	if value == 7:
+		grid_size = value # 7x7
+		grid_default = 0
+		grid_str = 'Grid Size: 7 x 7 :'
+		play_menu()
 	if value == 10:
 		grid_size = value # 10x10
-		grid_default = 0
+		grid_default = 1
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 	if value == 15:
 		grid_size = value # 15x15
-		grid_default = 1
-		grid_str = 'Grid Size: 15 x 15 :'
-		play_menu()
-	if value == 20:
-		grid_size = value # 20x20
 		grid_default = 2
-		grid_str = 'Grid Size: 20 x 20 :'
+		grid_str = 'Grid Size: 15 x 15 :'
 		play_menu()
 	else:
 		grid_size = 10 # 10x10 DEFAULT
-		grid_default = 0
+		grid_default = 1
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 
-#Method: Begins the game after options are set
+
+
+#--------------------------
+# Actual Game
+#--------------------------
 def start_the_game():
-	# Do the job here !
-	pass
+	pg.init()
+	# This sets the WIDTH and HEIGHT of each grid location
+	WIDTH = 50
+	HEIGHT = 50
+	# This sets the margin between each cell
+	MARGIN = 5
+	# Create a 2 dimensional array. A two dimensional
+	# array is simply a list of lists.
+	grid = []
+	for row in range(grid_size):
+		# Add an empty array that will hold each cell
+		# in this row
+		grid.append([])
+		for column in range(grid_size):
+			grid[row].append(0)  # Append a cell
+	# Set row 1, cell 5 to one. (Remember rows and
+	# column numbers start at zero.)
+	grid[1][5] = 1
+	# Used to manage how fast the surface updates
+	clock = pg.time.Clock()
+	global surface
+	# Loop until the user clicks the close button.
+	done = False
+	while not done:
+		for event in pg.event.get():  # User did something
+			if event.type == pg.QUIT:  # If user clicked close
+				done = True  # Flag that we are done so we exit this loop
+				main_menu()
+			elif event.type == pg.MOUSEBUTTONDOWN:
+				# User clicks the mouse. Get the position
+				pos = pg.mouse.get_pos()
+				# Change the x/y surface coordinates to grid coordinates
+				column = pos[0] // (WIDTH + MARGIN)
+				row = pos[1] // (HEIGHT + MARGIN)
+				# Set that location to one
+				grid[row][column] = 1
+				print("Click ", pos, "Grid coordinates: ", row, column)
+
+		# Set the surface background
+		surface.fill(BLACK)
+
+		# Draw the grid
+		for row in range(grid_size):
+			for column in range(grid_size):
+				color = WHITE
+				if grid[row][column] == 1:
+					color = GREEN
+				pg.draw.rect(surface,
+								color,
+								[(MARGIN + WIDTH) * column + MARGIN,
+								(MARGIN + HEIGHT) * row + MARGIN,
+								WIDTH,
+								HEIGHT])
+
+		# Limit to 60 frames per second
+		clock.tick(60)
+		# Go ahead and update the surface with what we've drawn.
+		pg.display.update()
+	
+
 
 #--------------------------
 # Main Menu
@@ -328,7 +390,7 @@ def play_menu():
 	play_sub.add_vertical_margin(30)
 	play_sub.add_selector('Players ', [('1 Player', 1), ('2 Player', 2)], default=player_default, onreturn=set_players, font_color=color)
 	play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], default=difficulty_default, onreturn=set_difficulty, font_color=color)
-	play_sub.add_selector('Grid Size ', [('10 x 10', 10), ('15 x 15', 15), ('20 x 20', 20)], default=grid_default, onreturn=set_grid_size, font_color=color)
+	play_sub.add_selector('Grid Size ', [('7 x 7', 7), ('10 x 10', 10), ('15 x 15', 15)], default=grid_default, onreturn=set_grid_size, font_color=color)
 	play_sub.add_button('[ Go ]', play_setting_sub, font_color=color)
 	play_sub.add_vertical_margin(50)
 	play_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
