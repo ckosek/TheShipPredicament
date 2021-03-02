@@ -46,6 +46,21 @@ back_color_default = 0
 volume_level = 0.2
 volume_default = 2
 
+#Player set for play menu
+players = 1
+player_default = 0
+player_str = 'Players: 1 :'
+
+#Difficulty set for play menu
+difficulty = 1
+difficulty_default = 0
+difficulty_str = 'Difficulty: Easy :'
+
+#Grid size set for play menu
+grid_size = 10
+grid_default = 0
+grid_str = 'Grid Size: 10 x 10 :'
+
 #---------------------
 #Methods/Functions
 #---------------------
@@ -91,6 +106,7 @@ def set_background(name, value):
 		options_menu()
 	else:
 		back_color = BLACK #BLACK BACKUP
+		back_color_default = 0
 		options_menu()
 
 #Method: Creates the theme used for all menus
@@ -155,18 +171,79 @@ def set_volume_items():
 
 #Method: Sets the difficulty level for Single Player games
 def set_difficulty(name, value):
-	# Do the job here !
-	pass
+	global difficulty
+	global difficulty_default
+	global difficulty_str
+	
+	if value == 1:
+		difficulty = value #EASY
+		difficulty_default = value - 1
+		difficulty_str = 'Difficulty: Easy :'
+		play_menu()
+	if value == 2:
+		difficulty = value #MEDIUM
+		difficulty_default = value - 1
+		difficulty_str = 'Difficulty: Medium :'
+		play_menu()
+	if value == 3:
+		difficulty = value #HARD
+		difficulty_default = value - 1
+		difficulty_str = 'Difficulty: Hard :'
+		play_menu()
+	else:
+		difficulty = 1 #EASY DEFAULT
+		difficulty_default = 0
+		difficulty_str = 'Difficulty: Easy :'
+		play_menu()
 
 #Method: Sets the number of players, 1 or 2
 def set_players(name, value):
-	# Do the job here !
-	pass
+	global players
+	global player_default
+	global player_str
+
+	if value == 1:
+		players = value #ONE PLAYER
+		player_default = value - 1
+		player_str = 'Players: 1 :'
+		play_menu()
+	if value == 2:
+		players = value #TWO PLAYERS
+		player_default = value - 1
+		player_str = 'Players: 2 :'
+		play_menu()
+	else:
+		players = 1 #ONE PLAYER DEFAULT
+		difficulty_default = 0
+		player_str = 'Players: 1 :'
+		play_menu()
 
 #Method: Sets the grid size to use during play
 def set_grid_size(name, value):
-	# Do the job here !
-	pass
+	global grid_size
+	global grid_default
+	global grid_str
+
+	if value == 10:
+		grid_size = value # 10x10
+		grid_default = 0
+		grid_str = 'Grid Size: 10 x 10 :'
+		play_menu()
+	if value == 15:
+		grid_size = value # 15x15
+		grid_default = 1
+		grid_str = 'Grid Size: 15 x 15 :'
+		play_menu()
+	if value == 20:
+		grid_size = value # 20x20
+		grid_default = 2
+		grid_str = 'Grid Size: 20 x 20 :'
+		play_menu()
+	else:
+		grid_size = 10 # 10x10 DEFAULT
+		grid_default = 0
+		grid_str = 'Grid Size: 10 x 10 :'
+		play_menu()
 
 #Method: Begins the game after options are set
 def start_the_game():
@@ -222,9 +299,9 @@ def options_menu():
 	
 	options_sub.mainloop(surface)
 
-#--------------------------
-# Play Menu
-#--------------------------
+#-------------------------------------------
+# Play Menu and Final Settings Confirmation
+#-------------------------------------------
 def play_menu():
 	pg.init()
 	global surface
@@ -234,15 +311,25 @@ def play_menu():
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
+	play_setting_sub = pm.Menu(700, 700, 'Confirm Settings', theme=mytheme)
+
+	play_setting_sub.add_label(player_str)
+	play_setting_sub.add_label(difficulty_str)
+	play_setting_sub.add_label(grid_str)
+	play_setting_sub.add_vertical_margin(30)
+	play_setting_sub.add_button('[ Confirm ]', start_the_game, font_color=color)
+	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
+	play_setting_sub.set_sound(sound_engine)
+
 	play_sub = pm.Menu(700, 700, 'Game Setup', theme=mytheme)
 
 	play_sub.add_label('Press Enter To')
 	play_sub.add_label('Apply Selected Item')
 	play_sub.add_vertical_margin(30)
-	play_sub.add_selector('Players ', [('1 Player', 1), ('2 Player', 2)], onchange=set_players, font_color=color)
-	play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], onchange=set_difficulty, font_color=color)
-	play_sub.add_selector('Grid Size ', [('10 x 10', 1), ('15 x 15', 2), ('20 x 20', 3)], onchange=set_grid_size, font_color=color)
-	play_sub.add_button('[ Go ]', start_the_game, font_color=color)
+	play_sub.add_selector('Players ', [('1 Player', 1), ('2 Player', 2)], default=player_default, onreturn=set_players, font_color=color)
+	play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], default=difficulty_default, onreturn=set_difficulty, font_color=color)
+	play_sub.add_selector('Grid Size ', [('10 x 10', 10), ('15 x 15', 15), ('20 x 20', 20)], default=grid_default, onreturn=set_grid_size, font_color=color)
+	play_sub.add_button('[ Go ]', play_setting_sub, font_color=color)
 	play_sub.add_vertical_margin(50)
 	play_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
 	play_sub.set_sound(sound_engine)
