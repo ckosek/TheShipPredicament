@@ -58,7 +58,7 @@ difficulty_str = 'Difficulty: Easy :'
 
 #Grid size set for play menu
 grid_size = 10
-grid_default = 0
+grid_default = 1
 grid_str = 'Grid Size: 10 x 10 :'
 
 #---------------------
@@ -111,6 +111,11 @@ def set_background(name, value):
 
 #Method: Creates the theme used for all menus
 def set_theme():
+	pg.init()
+	screen_res = pg.display.Info()
+	w = screen_res.current_w
+	new_w_offset = w/4
+
 	eight_bit_font = pm.font.FONT_8BIT
 	title_theme = pm.widgets.MENUBAR_STYLE_NONE
 	font_size = 37
@@ -120,7 +125,7 @@ def set_theme():
 		
 	current_theme = pm.themes.Theme(background_color=back_color, widget_font=eight_bit_font, title_bar_style=title_theme, 
 							menubar_close_button=True, title_font=eight_bit_font, title_font_color=color, 
-							title_font_size=font_size, selection_color=select_box_color)
+							title_font_size=font_size, title_offset=(new_w_offset,0), selection_color=select_box_color)
 	return current_theme
 
 #Method: Creates the sound engine used with menus and gameplay
@@ -224,31 +229,93 @@ def set_grid_size(name, value):
 	global grid_default
 	global grid_str
 
+	if value == 7:
+		grid_size = value # 7x7
+		grid_default = 0
+		grid_str = 'Grid Size: 7 x 7 :'
+		play_menu()
 	if value == 10:
 		grid_size = value # 10x10
-		grid_default = 0
+		grid_default = 1
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 	if value == 15:
 		grid_size = value # 15x15
-		grid_default = 1
-		grid_str = 'Grid Size: 15 x 15 :'
-		play_menu()
-	if value == 20:
-		grid_size = value # 20x20
 		grid_default = 2
-		grid_str = 'Grid Size: 20 x 20 :'
+		grid_str = 'Grid Size: 15 x 15 :'
 		play_menu()
 	else:
 		grid_size = 10 # 10x10 DEFAULT
-		grid_default = 0
+		grid_default = 1
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 
-#Method: Begins the game after options are set
+#--------------------------
+# Actual Game
+#--------------------------
 def start_the_game():
-	# Do the job here !
-	pass
+	pg.init()
+	# This sets the WIDTH and HEIGHT of each grid location
+	WIDTH = 50
+	HEIGHT = 50
+	# This sets the margin between each cell
+	MARGIN = 5
+	# Create a 2 dimensional array. A two dimensional
+	# array is simply a list of lists.
+	grid = []
+	for row in range(grid_size):
+		# Add an empty array that will hold each cell
+		# in this row
+		grid.append([])
+		for column in range(grid_size):
+			grid[row].append(0)  # Append a cell
+
+	# Used to manage how fast the surface updates
+	clock = pg.time.Clock()
+	global surface
+	# Loop until the user clicks the close button.
+	done = False
+	while not done:
+		for event in pg.event.get():  # User did something
+			if event.type == pg.QUIT:  # If user clicked close
+				done = True  # Flag that we are done so we exit this loop
+				main_menu()
+			elif event.type == pg.KEYDOWN:
+				if event.key == pg.K_ESCAPE:
+					done = True
+					main_menu()
+			elif event.type == pg.MOUSEBUTTONDOWN:
+				# User clicks the mouse. Get the position
+				pos = pg.mouse.get_pos()
+				# Change the x/y surface coordinates to grid coordinates
+				column = pos[0] // (WIDTH + MARGIN)
+				row = pos[1] // (HEIGHT + MARGIN)
+				# Set that location to one
+				grid[row][column] = 1
+				print("Click ", pos, "Grid coordinates: ", row, column)
+
+		# Set the surface background
+		surface.fill(back_color)
+
+		# Draw the grid
+		for row in range(grid_size):
+			for column in range(grid_size):
+				square_color = WHITE
+				if back_color == WHITE:
+					square_color = BLACK
+				if grid[row][column] == 1:
+					square_color = NAVY
+				pg.draw.rect(surface,
+								square_color,
+								[(MARGIN + WIDTH) * column + MARGIN,
+								(MARGIN + HEIGHT) * row + MARGIN,
+								WIDTH,
+								HEIGHT])
+
+		# Limit to 60 frames per second
+		clock.tick(60)
+		# Go ahead and update the surface with what we've drawn.
+		pg.display.update()
 
 #--------------------------
 # Main Menu
@@ -258,11 +325,14 @@ def main_menu():
 	global surface
 	global color
 	global back_color
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	menu = pm.Menu(700, 700, 'The Ship Predicament', theme=mytheme)
+	menu = pm.Menu(h, w, 'The Ship Predicament', theme=mytheme)
 
 	menu.add_button('Play', play_menu, font_color=color)
 	menu.add_button('Options', options_menu, font_color=color)
@@ -281,11 +351,15 @@ def options_menu():
 	global back_color
 	global volume_default
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 	volume_items = set_volume_items()
 	
-	options_sub = pm.Menu(700, 700, 'Options', theme=mytheme)
+	options_sub = pm.Menu(h, w, 'Options', theme=mytheme)
 
 	options_sub.add_label('Press Enter To')
 	options_sub.add_label('Apply Selected Item')
@@ -308,10 +382,14 @@ def play_menu():
 	global color
 	global back_color
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	play_setting_sub = pm.Menu(700, 700, 'Confirm Settings', theme=mytheme)
+	play_setting_sub = pm.Menu(h, w, 'Confirm Settings', theme=mytheme)
 
 	play_setting_sub.add_label(player_str)
 	play_setting_sub.add_label(difficulty_str)
@@ -321,14 +399,14 @@ def play_menu():
 	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
 	play_setting_sub.set_sound(sound_engine)
 
-	play_sub = pm.Menu(700, 700, 'Game Setup', theme=mytheme)
+	play_sub = pm.Menu(h, w, 'Game Setup', theme=mytheme)
 
 	play_sub.add_label('Press Enter To')
 	play_sub.add_label('Apply Selected Item')
 	play_sub.add_vertical_margin(30)
 	play_sub.add_selector('Players ', [('1 Player', 1), ('2 Player', 2)], default=player_default, onreturn=set_players, font_color=color)
 	play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], default=difficulty_default, onreturn=set_difficulty, font_color=color)
-	play_sub.add_selector('Grid Size ', [('10 x 10', 10), ('15 x 15', 15), ('20 x 20', 20)], default=grid_default, onreturn=set_grid_size, font_color=color)
+	play_sub.add_selector('Grid Size ', [('7 x 7', 7), ('10 x 10', 10), ('15 x 15', 15)], default=grid_default, onreturn=set_grid_size, font_color=color)
 	play_sub.add_button('[ Go ]', play_setting_sub, font_color=color)
 	play_sub.add_vertical_margin(50)
 	play_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
