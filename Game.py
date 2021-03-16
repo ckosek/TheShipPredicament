@@ -1,15 +1,16 @@
 import pygame as pg
 import sys, random
 from pygame.locals import *
-from MainMenu import grid_size
+from MainMenu import grid_size, color
 
 #Initiating pygame
 pg.init()
 
-#grid_size = 15
+grid_size = 15
 
 #Set surface as Fullscreen Display
 surface = pg.display.set_mode((0,0),pg.FULLSCREEN)
+monitor_info = pg.display.Info()
         
 #Clock and Framerate
 clock = pg.time.Clock()
@@ -70,7 +71,7 @@ class GameTile:
         self.status = self.BLANK
         self.surface = surface
         self.hasBeenClicked = False
-        self.color = (255, 255, 255)
+        self.color = WHITE
         self.isClickableOverride = False
         self.rectangle = (xPos, yPos, width, height)
         self.ship = None
@@ -103,7 +104,7 @@ class GameTile:
         self.isClickableOverride = setting
 
     def draw(self, playerTurn):
-        self.color = (225, 225, 225)
+        self.color = WHITE
         if self.ship != None and (playerTurn == True or self.status == self.HIT or self.status == self.MISS):
             if self.playerNumber == 2:
                 value = self.getShip().getLength()
@@ -130,11 +131,11 @@ class GameTile:
         if self.ship.checkDestroyed():
             font = pg.font.SysFont("none", 24)
             if self.playerNumber == 1:
-                text = font.render("Player 2 ship destroyed!", True,WHITE)
+                text = font.render("Player 2 ship destroyed!", True, WHITE)
                 taunts = ["'Shouldn't have been bad, aliens!'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", "'Might as well quit now aliens.'", "'Oops, did we do that?'", "'You set sail for fail, aliens!'"]
                 text2 = font.render(taunts[random.randint(0, 5)], True, WHITE)
             if self. playerNumber == 2:
-                text = font.render("Player 1 ship destroyed!", True,WHITE)
+                text = font.render("Player 1 ship destroyed!", True, WHITE)
                 taunts = ["'That was easy.'", "'Silly humans.'", "'Earth has some pretty easy hiding spots.'", "'FRESH MEAT!'", "'Space ships are strictly better than boats.'", "'Bottom of the food chain you go!'" ]
                 text2 = font.render(taunts[random.randint(0, 5)], True, WHITE)
             loopFinished = False
@@ -146,8 +147,8 @@ class GameTile:
                     if event.type == pg.MOUSEBUTTONDOWN:
                             loopFinished = True
                 self.surface.fill(BLACK)
-                self.surface.blit(text, (480/2 - text.get_width() / 2, 640 / 2))
-                self.surface.blit(text2, (480/2 - text.get_width() / 2, 50 + 640 / 2))
+                self.surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                self.surface.blit(text2, (monitor_info.current_w /2 - text.get_width() / 2, 50 + monitor_info.current_h / 2))
                 pg.display.update()
 
     def getShip(self):
@@ -299,29 +300,19 @@ class Ship:
 #--------------------------
 def drawGrid(surface):
     #First grid
-    #pg.draw.line(surface, BLACK, (250, 40), (500, 40))
-    #pg.draw.line(surface, BLACK, (500, 40), (500, 280))
-    #pg.draw.line(surface, BLACK, (250, 40), (250, 280))
-    #pg.draw.line(surface, BLACK, (250, 280), (500, 280))
-
     #Vertical Lines
-    for i in range(250, 250+24*grid_size, 24):
+    for i in range(250, 250+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (i, 40), (i, 40+24*grid_size))
     # Horizontal Lines
-    for i in range(40, 40+24*grid_size, 24):
+    for i in range(40, 40+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (250, i), (250+24*grid_size, i))
 
     #Second grid
-    #pg.draw.line(surface, BLACK, (250, 500), (500, 500))
-    #pg.draw.line(surface, BLACK, (500, 500), (500, 600))
-    #pg.draw.line(surface, BLACK, (250, 500), (250, 600))
-    #pg.draw.line(surface, BLACK, (250, 600), (500, 600))
-
     #Vertical Lines
-    for i in range(250, 250+24*grid_size, 24):
+    for i in range(250, 250+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (i, 500), (i, 500+24*grid_size))
     # Horizontal Lines
-    for i in range(500, 500+24*grid_size, 24):
+    for i in range(500, 500+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (250, i), (250+24*grid_size, i))
 
 
@@ -387,10 +378,10 @@ while True:
             text = font.render("Player 2's turn!", True, WHITE)
         else:
             text = font.render("Player 1's turn!", True, WHITE)
-        surface.blit(text,(480/2 - text.get_width() / 2, 640 / 2))
+        surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
     else:
         text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, WHITE)
-        surface.blit(text,(480/2 - text.get_width() / 2, 640 / 2))
+        surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
     drawGrid(surface)
     pg.display.update()
 
@@ -406,7 +397,7 @@ while True:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     loopFinished = True
             surface.fill(BLACK)
-            surface.blit(text, (480/2 - text.get_width() / 2, 640 / 2))
+            surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
             pg.display.update()
         upNext = 2
         limboMode = False
@@ -425,7 +416,7 @@ while True:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     loopFinished = True
             surface.fill(BLACK)
-            surface.blit(text, (480/2 - text.get_width() / 2, 640 / 2))
+            surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
             pg.display.update()
         upNext = 2
         limboMode = False
