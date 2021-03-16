@@ -396,6 +396,10 @@ def play_menu():
 	play_setting_sub.add_label(grid_str)
 	play_setting_sub.add_vertical_margin(30)
 	play_setting_sub.add_button('[ Confirm ]', start_the_game, font_color=color)
+	
+	#Used to test game over screen
+	#play_setting_sub.add_button('[ Confirm ]', game_over_menu, font_color=color)
+	
 	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
 	play_setting_sub.set_sound(sound_engine)
 
@@ -413,6 +417,44 @@ def play_menu():
 	play_sub.set_sound(sound_engine)
 
 	play_sub.mainloop(surface)
+
+#-------------------------------------------
+# Display Screen for Game Completion
+#-------------------------------------------
+def game_over_menu():
+	pg.init()
+	global surface
+	global color
+	global back_color
+	global volume_default
+
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
+	player_won = True
+	Winner_Str = ''
+	if player_won:
+		Winner_Str = 'Player 1 Wins'
+	else:
+		Winner_Str = 'Player 2 Wins'
+
+	mytheme = set_theme()
+	sound_engine = create_sound_engine()
+	volume_items = set_volume_items()
+	
+	game_over_sub = pm.Menu(h, w, 'Game Over', theme=mytheme)
+
+	game_over_sub.add_label(Winner_Str)
+	game_over_sub.add_image('GameOverBattleship.jpg')
+	game_over_sub.add_vertical_margin(30)
+	game_over_sub.add_button('[ Play Again ]', play_menu, font_color=color)
+	game_over_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
+	game_over_sub.add_button('[ Exit ]', pm.events.EXIT, font_color=color)
+	game_over_sub.set_sound(sound_engine)
+	
+	game_over_sub.mainloop(surface)
+
 
 #--------------------------
 # Main Statement
