@@ -1,12 +1,9 @@
 import pygame as pg
 import sys, random
 from pygame.locals import *
-from MainMenu import grid_size, color
 
 #Initiating pygame
 pg.init()
-
-grid_size = 15
 
 #Set surface as Fullscreen Display
 surface = pg.display.set_mode((0,0),pg.FULLSCREEN)
@@ -49,7 +46,7 @@ class Button:
     def draw(self):
         pg.draw.rect(self.surface, self.color, self.rectangle)
 
-    #This will be called in the game loop whenever there is a click event
+    #Called upon Clicks
     def wasClicked(self, clickPos):
         if clickPos[0] > self.xPos and clickPos[0] < self.xPos + self.width:
             if clickPos[1] > self.yPos and clickPos[1] < self.yPos + self.height:
@@ -132,11 +129,11 @@ class GameTile:
             font = pg.font.SysFont("none", 24)
             if self.playerNumber == 1:
                 text = font.render("Player 2 ship destroyed!", True, WHITE)
-                taunts = ["'Shouldn't have been bad, aliens!'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", "'Might as well quit now aliens.'", "'Oops, did we do that?'", "'You set sail for fail, aliens!'"]
+                taunts = ["'You're a natural'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", "'Are you even trying?'", "'Oops, did I do that?'", "'Was that ship made of paper?'"]
                 text2 = font.render(taunts[random.randint(0, 5)], True, WHITE)
             if self. playerNumber == 2:
                 text = font.render("Player 1 ship destroyed!", True, WHITE)
-                taunts = ["'That was easy.'", "'Silly humans.'", "'Earth has some pretty easy hiding spots.'", "'FRESH MEAT!'", "'Space ships are strictly better than boats.'", "'Bottom of the food chain you go!'" ]
+                taunts = ["'That was easy.'", "'Supreme Leader South will love that'", "'RIP Jack Sparrow'", "'FRESH MEAT!'", "'This predicament will be over in no time'", "'We live in a society'" ]
                 text2 = font.render(taunts[random.randint(0, 5)], True, WHITE)
             loopFinished = False
             while loopFinished == False:
@@ -161,7 +158,7 @@ class Player:
     RIGHT = 2
     DOWN = 3
     
-    def __init__(self, setting, playerNumber, surface):
+    def __init__(self, setting, playerNumber, surface, grid_size):
         self.myTurn = setting
         self.playerNumber = playerNumber
         self.surface = surface
@@ -175,7 +172,7 @@ class Player:
                 else:
                     temp.append(GameTile(250 + 24*i, 500 + 24*j, 24, 24, 2, self.surface))
             self.buttonTiles.append(temp)
-        self.distributeShips()
+        self.distributeShips(grid_size)
             
     def drawTiles(self):
         for row in self.buttonTiles:
@@ -188,7 +185,7 @@ class Player:
     def getButtonTiles(self):
         return self.buttonTiles
 
-    def distributeShips(self):
+    def distributeShips(self, grid_size):
         for ship in self.ships:
             done = False
             while not done:
@@ -298,7 +295,7 @@ class Ship:
 #--------------------------
 # Grid creation
 #--------------------------
-def drawGrid(surface):
+def drawGrid(surface,grid_size):
     #First grid
     #Vertical Lines
     for i in range(250, 250+24*grid_size+1, 24):
@@ -317,110 +314,110 @@ def drawGrid(surface):
 
 
 
+def RunGame(grid_size):
+    player1 = Player(True, 1, surface, grid_size)
+    player2 = Player(False, 2, surface, grid_size)
 
-player1 = Player(True, 1, surface)
-player2 = Player(False, 2, surface)
+    upNext = 2
+    limboMode = False 
 
-upNext = 2
-limboMode = False 
-
-font = pg.font.SysFont("none", 24)
-text2 = font.render("Click to begin turn", True,WHITE)
+    font = pg.font.SysFont("none", 24)
+    text2 = font.render("Click to begin turn", True,WHITE)
 
 
-while True:
-    #Checking for game events'
-    tileClicked = False
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            pg.quit()
-            sys.exit()
+    while True:
+        #Checking for game events'
+        tileClicked = False
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+                
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if player2.getTurn() == True:
+                    for row in player1.getButtonTiles():
+                        for tile in row:
+                            feels = tile.wasClicked(pg.mouse.get_pos())
+                            if feels == True:
+                                tileClicked = True
+
+                if player1.getTurn() == True:        
+                    for row in player2.getButtonTiles():
+                        for tile in row:
+                            feels = tile.wasClicked(pg.mouse.get_pos())
+                            if feels == True:
+                                tileClicked = True
+                                
+                if limboMode == True:
+                    if upNext == 2:
+                        player2.flipTurn()
+                        upNext = 1
+                        limboMode = False
+                    else:
+                        player1.flipTurn()
+                        upNext = 2
+                        limboMode = False
             
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if player2.getTurn() == True:
-                for row in player1.getButtonTiles():
-                    for tile in row:
-                        feels = tile.wasClicked(pg.mouse.get_pos())
-                        if feels == True:
-                            tileClicked = True
-
-            if player1.getTurn() == True:        
-                for row in player2.getButtonTiles():
-                    for tile in row:
-                        feels = tile.wasClicked(pg.mouse.get_pos())
-                        if feels == True:
-                            tileClicked = True
                             
-            if limboMode == True:
-                if upNext == 2:
-                    player2.flipTurn()
-                    upNext = 1
-                    limboMode = False
-                else:
+            if tileClicked == True:
+                if player1.getTurn() == True:
                     player1.flipTurn()
-                    upNext = 2
-                    limboMode = False
-        
-                        
-        if tileClicked == True:
-            if player1.getTurn() == True:
-                player1.flipTurn()
-                limboMode = True
-            elif player2.getTurn() == True:
-                player2.flipTurn()
-                limboMode = True
+                    limboMode = True
+                elif player2.getTurn() == True:
+                    player2.flipTurn()
+                    limboMode = True
 
-    surface.fill(BLACK)
-    player1.drawTiles()
-    player2.drawTiles()
-    if not limboMode:
-        if upNext == 1:
-            text = font.render("Player 2's turn!", True, WHITE)
+        surface.fill(BLACK)
+        player1.drawTiles()
+        player2.drawTiles()
+        if not limboMode:
+            if upNext == 1:
+                text = font.render("Player 2's turn!", True, WHITE)
+            else:
+                text = font.render("Player 1's turn!", True, WHITE)
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
         else:
-            text = font.render("Player 1's turn!", True, WHITE)
-        surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-    else:
-        text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, WHITE)
-        surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-    drawGrid(surface)
-    pg.display.update()
+            text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, WHITE)
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+        drawGrid(surface, grid_size)
+        pg.display.update()
 
-    if player1.allShipsDestroyed():
-        loopFinished = False
-        font = pg.font.SysFont("none", 24)
-        text = font.render("Player 1 has won!", True,WHITE)
-        while loopFinished == False:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    loopFinished = True
-            surface.fill(BLACK)
-            surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-            pg.display.update()
-        upNext = 2
-        limboMode = False
-        player1 = Player(True, 1, surface)
-        player2 = Player(False, 2, surface)
+        if player1.allShipsDestroyed():
+            loopFinished = False
+            font = pg.font.SysFont("none", 24)
+            text = font.render("Player 1 has won!", True,WHITE)
+            while loopFinished == False:
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        pg.quit()
+                        sys.exit()
+                    if event.type == pg.MOUSEBUTTONDOWN:
+                        loopFinished = True
+                surface.fill(BLACK)
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                pg.display.update()
+            upNext = 2
+            limboMode = False
+            player1 = Player(True, 1, surface, grid_size)
+            player2 = Player(False, 2, surface, grid_size)
+            
+        if player2.allShipsDestroyed():
+            loopFinished = False
+            font = pg.font.SysFont("none", 24)
+            text = font.render("Player 2 has won!", True,WHITE)
+            while loopFinished == False:
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        pg.quit()
+                        sys.exit()
+                    if event.type == pg.MOUSEBUTTONDOWN:
+                        loopFinished = True
+                surface.fill(BLACK)
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                pg.display.update()
+            upNext = 2
+            limboMode = False
+            player1 = Player(True, 1, surface, grid_size)
+            player2 = Player(False, 2, surface, grid_size)
+            
         
-    if player2.allShipsDestroyed():
-        loopFinished = False
-        font = pg.font.SysFont("none", 24)
-        text = font.render("Player 2 has won!", True,WHITE)
-        while loopFinished == False:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    loopFinished = True
-            surface.fill(BLACK)
-            surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-            pg.display.update()
-        upNext = 2
-        limboMode = False
-        player1 = Player(True, 1, surface)
-        player2 = Player(False, 2, surface)
-        
-    

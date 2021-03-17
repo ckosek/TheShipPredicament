@@ -4,6 +4,7 @@ import sys
 import pygame as pg
 import pygame_menu as pm
 from pygame_menu import sound
+from Game import RunGame
 
 #---------------------
 #Constants and Globals
@@ -251,65 +252,7 @@ def set_grid_size(name, value):
 # Actual Game
 #--------------------------
 def start_the_game():
-	pg.init()
-	# This sets the WIDTH and HEIGHT of each grid location
-	WIDTH = 50
-	HEIGHT = 50
-	# This sets the margin between each cell
-	MARGIN = 5
-	# Create a 2 dimensional array. A two dimensional
-	# array is simply a list of lists.
-	grid = []
-	for row in range(grid_size):
-		# Add an empty array that will hold each cell
-		# in this row
-		grid.append([])
-		for column in range(grid_size):
-			grid[row].append(0)  # Append a cell
-	# Set row 1, cell 5 to one. (Remember rows and
-	# column numbers start at zero.)
-	grid[1][5] = 1
-	# Used to manage how fast the surface updates
-	clock = pg.time.Clock()
-	global surface
-	# Loop until the user clicks the close button.
-	done = False
-	while not done:
-		for event in pg.event.get():  # User did something
-			if event.type == pg.QUIT:  # If user clicked close
-				done = True  # Flag that we are done so we exit this loop
-				main_menu()
-			elif event.type == pg.MOUSEBUTTONDOWN:
-				# User clicks the mouse. Get the position
-				pos = pg.mouse.get_pos()
-				# Change the x/y surface coordinates to grid coordinates
-				column = pos[0] // (WIDTH + MARGIN)
-				row = pos[1] // (HEIGHT + MARGIN)
-				# Set that location to one
-				grid[row][column] = 1
-				print("Click ", pos, "Grid coordinates: ", row, column)
-
-		# Set the surface background
-		surface.fill(BLACK)
-
-		# Draw the grid
-		for row in range(grid_size):
-			for column in range(grid_size):
-				color = WHITE
-				if grid[row][column] == 1:
-					color = GREEN
-				pg.draw.rect(surface,
-								color,
-								[(MARGIN + WIDTH) * column + MARGIN,
-								(MARGIN + HEIGHT) * row + MARGIN,
-								WIDTH,
-								HEIGHT])
-
-		# Limit to 60 frames per second
-		clock.tick(60)
-		# Go ahead and update the surface with what we've drawn.
-		pg.display.update()
-	
+	RunGame(grid_size)
 
 
 #--------------------------
