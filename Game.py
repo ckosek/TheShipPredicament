@@ -332,6 +332,11 @@ def RunGame(grid_size):
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    done = True
+                    #main_menu() call is where this will be sent
+                    return
                 
             if event.type == pg.MOUSEBUTTONDOWN:
                 if player2.getTurn() == True:

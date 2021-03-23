@@ -112,6 +112,11 @@ def set_background(name, value):
 
 #Method: Creates the theme used for all menus
 def set_theme():
+	pg.init()
+	screen_res = pg.display.Info()
+	w = screen_res.current_w
+	new_w_offset = w/2 - len("The Ship Predicament")/0.0625
+
 	eight_bit_font = pm.font.FONT_8BIT
 	title_theme = pm.widgets.MENUBAR_STYLE_NONE
 	font_size = 37
@@ -121,7 +126,7 @@ def set_theme():
 		
 	current_theme = pm.themes.Theme(background_color=back_color, widget_font=eight_bit_font, title_bar_style=title_theme, 
 							menubar_close_button=True, title_font=eight_bit_font, title_font_color=color, 
-							title_font_size=font_size, selection_color=select_box_color)
+							title_font_size=font_size, title_offset=(new_w_offset,0), selection_color=select_box_color)
 	return current_theme
 
 #Method: Creates the sound engine used with menus and gameplay
@@ -246,13 +251,12 @@ def set_grid_size(name, value):
 		grid_str = 'Grid Size: 10 x 10 :'
 		play_menu()
 
-
-
 #--------------------------
 # Actual Game
 #--------------------------
 def start_the_game():
 	RunGame(grid_size)
+	main_menu()
 
 
 #--------------------------
@@ -263,11 +267,14 @@ def main_menu():
 	global surface
 	global color
 	global back_color
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	menu = pm.Menu(700, 700, 'The Ship Predicament', theme=mytheme)
+	menu = pm.Menu(h, w, 'The Ship Predicament', theme=mytheme)
 
 	menu.add_button('Play', play_menu, font_color=color)
 	menu.add_button('Options', options_menu, font_color=color)
@@ -286,11 +293,15 @@ def options_menu():
 	global back_color
 	global volume_default
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 	volume_items = set_volume_items()
 	
-	options_sub = pm.Menu(700, 700, 'Options', theme=mytheme)
+	options_sub = pm.Menu(h, w, 'Options', theme=mytheme)
 
 	options_sub.add_label('Press Enter To')
 	options_sub.add_label('Apply Selected Item')
@@ -313,20 +324,28 @@ def play_menu():
 	global color
 	global back_color
 
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
 
-	play_setting_sub = pm.Menu(700, 700, 'Confirm Settings', theme=mytheme)
+	play_setting_sub = pm.Menu(h, w, 'Confirm Settings', theme=mytheme)
 
 	play_setting_sub.add_label(player_str)
 	play_setting_sub.add_label(difficulty_str)
 	play_setting_sub.add_label(grid_str)
 	play_setting_sub.add_vertical_margin(30)
 	play_setting_sub.add_button('[ Confirm ]', start_the_game, font_color=color)
+	
+	#Used to test game over screen
+	#play_setting_sub.add_button('[ Confirm ]', game_over_menu, font_color=color)
+	
 	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
 	play_setting_sub.set_sound(sound_engine)
 
-	play_sub = pm.Menu(700, 700, 'Game Setup', theme=mytheme)
+	play_sub = pm.Menu(h, w, 'Game Setup', theme=mytheme)
 
 	play_sub.add_label('Press Enter To')
 	play_sub.add_label('Apply Selected Item')
@@ -340,6 +359,44 @@ def play_menu():
 	play_sub.set_sound(sound_engine)
 
 	play_sub.mainloop(surface)
+
+#-------------------------------------------
+# Display Screen for Game Completion
+#-------------------------------------------
+def game_over_menu():
+	pg.init()
+	global surface
+	global color
+	global back_color
+	global volume_default
+
+	screen_res = pg.display.Info()
+	h = screen_res.current_h
+	w = screen_res.current_w
+
+	player_won = True
+	Winner_Str = ''
+	if player_won:
+		Winner_Str = 'Player 1 Wins'
+	else:
+		Winner_Str = 'Player 2 Wins'
+
+	mytheme = set_theme()
+	sound_engine = create_sound_engine()
+	volume_items = set_volume_items()
+	
+	game_over_sub = pm.Menu(h, w, 'Game Over', theme=mytheme)
+
+	game_over_sub.add_label(Winner_Str)
+	game_over_sub.add_image('GameOverBattleship.jpg')
+	game_over_sub.add_vertical_margin(30)
+	game_over_sub.add_button('[ Play Again ]', play_menu, font_color=color)
+	game_over_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
+	game_over_sub.add_button('[ Exit ]', pm.events.EXIT, font_color=color)
+	game_over_sub.set_sound(sound_engine)
+	
+	game_over_sub.mainloop(surface)
+
 
 #--------------------------
 # Main Statement
