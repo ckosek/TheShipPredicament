@@ -333,8 +333,6 @@ def RunGame(grid_size, volume_level):
 	#Initialize sounds
 	#################################################################
 	pg.init()
-	gameplay_music_engine(volume_level)
-	game_over_sound = pg.mixer.Sound("sounds\SmallApplause.wav")
 	#################################################################
 
 	player1 = Player(True, 1, surface, grid_size)
@@ -345,7 +343,10 @@ def RunGame(grid_size, volume_level):
 
 	font = pg.font.SysFont("none", 24)
 	text2 = font.render("Click to begin turn", True,WHITE)
-
+	exitButton = Button(monitor_info.current_w /2 -75, monitor_info.current_h - monitor_info.current_h/4 - 25, 125, 50, RED, surface)
+	#Sounds begin playing after initialization of drawings
+	gameplay_music_engine(volume_level)
+	game_over_sound = pg.mixer.Sound("sounds\SmallApplause.wav")
 
 	while True:
 		#Checking for game events'
@@ -368,6 +369,8 @@ def RunGame(grid_size, volume_level):
 							feels = tile.wasClicked(pg.mouse.get_pos())
 							if feels == True:
 								tileClicked = True
+					if exitButton.wasClicked(pg.mouse.get_pos()):
+						return 3
 
 				if player1.getTurn() == True:		
 					for row in player2.getButtonTiles():
@@ -375,6 +378,8 @@ def RunGame(grid_size, volume_level):
 							feels = tile.wasClicked(pg.mouse.get_pos())
 							if feels == True:
 								tileClicked = True
+					if exitButton.wasClicked(pg.mouse.get_pos()):
+						return 3
 								
 				if limboMode == True:
 					if upNext == 2:
@@ -398,6 +403,9 @@ def RunGame(grid_size, volume_level):
 		surface.fill(BLACK)
 		player1.drawTiles()
 		player2.drawTiles()
+		texttest = font.render("Exit to Menu", True, WHITE)
+		exitButton.draw()
+		surface.blit(texttest, (monitor_info.current_w/2 -65, monitor_info.current_h - monitor_info.current_h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
 				text = font.render("Player 2's turn!", True, WHITE)
