@@ -148,7 +148,7 @@ def create_sound_engine():
 def background_music_loop():
 	global volume_level
 	pg.init()
-	pg.mixer.music.load('MusicGameplay.ogg')
+	pg.mixer.music.load('sounds\MusicGameplay.ogg')
 	pg.mixer.music.set_volume(volume_level)
 	pg.mixer.music.play(-1) #loops forevever while game is up
 
@@ -388,7 +388,7 @@ def game_over_menu():
 	game_over_sub = pm.Menu(h, w, 'Game Over', theme=mytheme)
 
 	game_over_sub.add_label(Winner_Str)
-	game_over_sub.add_image('GameOverBattleship.jpg')
+	game_over_sub.add_image('img\GameOverBattleship.jpg')
 	game_over_sub.add_vertical_margin(30)
 	game_over_sub.add_button('[ Play Again ]', play_menu, font_color=color)
 	game_over_sub.add_button('[ Main Menu ]', main_menu, font_color=color)
