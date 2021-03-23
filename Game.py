@@ -144,8 +144,8 @@ class GameTile:
                     if event.type == pg.MOUSEBUTTONDOWN:
                             loopFinished = True
                 self.surface.fill(BLACK)
-                self.surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-                self.surface.blit(text2, (monitor_info.current_w /2 - text.get_width() / 2, 50 + monitor_info.current_h / 2))
+                self.surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
+                self.surface.blit(text2, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
                 pg.display.update()
 
     def getShip(self):
@@ -168,9 +168,9 @@ class Player:
             temp = []
             for j in range(grid_size):
                 if self.playerNumber == 1:
-                    temp.append(GameTile(250 + 24*i, 40 + 24*j, 24, 24, 1, self.surface))
+                    temp.append(GameTile(250 + 24*i, 300 + 24*j, 24, 24, 1, self.surface))
                 else:
-                    temp.append(GameTile(250 + 24*i, 500 + 24*j, 24, 24, 2, self.surface))
+                    temp.append(GameTile(1000 + 24*i, 300 + 24*j, 24, 24, 2, self.surface))
             self.buttonTiles.append(temp)
         self.distributeShips(grid_size)
             
@@ -220,7 +220,7 @@ class Player:
                     return True
                 
             elif direction == self.RIGHT:
-                if column + ship.getLength() > 9:
+                if column + ship.getLength() > 5:
                     return False
                 else:
                     for i in range(column, column + ship.getLength()):
@@ -229,7 +229,7 @@ class Player:
                     return True
                 
             elif direction == self.DOWN:
-                if row + ship.getLength() > 9:
+                if row + ship.getLength() > 5:
                     return False
                 else:
                     for i in range(row, row + ship.getLength()):
@@ -299,18 +299,18 @@ def drawGrid(surface,grid_size):
     #First grid
     #Vertical Lines
     for i in range(250, 250+24*grid_size+1, 24):
-        pg.draw.line(surface, BLACK, (i, 40), (i, 40+24*grid_size))
+        pg.draw.line(surface, BLACK, (i, 300), (i, 300+24*grid_size))
     # Horizontal Lines
-    for i in range(40, 40+24*grid_size+1, 24):
+    for i in range(300, 300+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (250, i), (250+24*grid_size, i))
 
     #Second grid
     #Vertical Lines
-    for i in range(250, 250+24*grid_size+1, 24):
-        pg.draw.line(surface, BLACK, (i, 500), (i, 500+24*grid_size))
+    for i in range(1000, 1000+24*grid_size+1, 24):
+        pg.draw.line(surface, BLACK, (i, 300), (i, 300+24*grid_size))
     # Horizontal Lines
-    for i in range(500, 500+24*grid_size+1, 24):
-        pg.draw.line(surface, BLACK, (250, i), (250+24*grid_size, i))
+    for i in range(300, 300+24*grid_size+1, 24):
+        pg.draw.line(surface, BLACK, (1000, i), (1000+24*grid_size, i))
 
 
 
@@ -380,10 +380,10 @@ def RunGame(grid_size):
                 text = font.render("Player 2's turn!", True, WHITE)
             else:
                 text = font.render("Player 1's turn!", True, WHITE)
-            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, 50))
         else:
             text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, WHITE)
-            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, 50))
         drawGrid(surface, grid_size)
         pg.display.update()
 
@@ -399,7 +399,7 @@ def RunGame(grid_size):
                     if event.type == pg.MOUSEBUTTONDOWN:
                         loopFinished = True
                 surface.fill(BLACK)
-                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
                 pg.display.update()
             upNext = 2
             limboMode = False
@@ -418,7 +418,7 @@ def RunGame(grid_size):
                     if event.type == pg.MOUSEBUTTONDOWN:
                         loopFinished = True
                 surface.fill(BLACK)
-                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
                 pg.display.update()
             upNext = 2
             limboMode = False
