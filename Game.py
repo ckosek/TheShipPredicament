@@ -144,8 +144,8 @@ class GameTile:
                     if event.type == pg.MOUSEBUTTONDOWN:
                             loopFinished = True
                 self.surface.fill(BLACK)
-                self.surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
-                self.surface.blit(text2, (monitor_info.current_w /2 - text.get_width() / 2, 50 + monitor_info.current_h / 2))
+                self.surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
+                self.surface.blit(text2, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
                 pg.display.update()
 
     def getShip(self):
@@ -375,10 +375,10 @@ def RunGame(grid_size):
                 text = font.render("Player 2's turn!", True, WHITE)
             else:
                 text = font.render("Player 1's turn!", True, WHITE)
-            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, 50))
         else:
             text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, WHITE)
-            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+            surface.blit(text,(monitor_info.current_w /2 - text.get_width() / 2, 50))
         drawGrid(surface, grid_size)
         pg.display.update()
 
@@ -394,7 +394,7 @@ def RunGame(grid_size):
                     if event.type == pg.MOUSEBUTTONDOWN:
                         loopFinished = True
                 surface.fill(BLACK)
-                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
                 pg.display.update()
             upNext = 2
             limboMode = False
@@ -413,7 +413,7 @@ def RunGame(grid_size):
                     if event.type == pg.MOUSEBUTTONDOWN:
                         loopFinished = True
                 surface.fill(BLACK)
-                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, monitor_info.current_h / 2))
+                surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
                 pg.display.update()
             upNext = 2
             limboMode = False
