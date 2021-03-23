@@ -73,6 +73,9 @@ class GameTile:
 		self.rectangle = (xPos, yPos, width, height)
 		self.ship = None
 		self.playerNumber = playerNumber
+		#Sound Effects
+		self.explosion_sound = pg.mixer.Sound("sounds\Explosion.wav")
+		self.splash_sound = pg.mixer.Sound("sounds\Splash.wav")
 
 	def wasClicked(self, clickPos):
 		if self.isClickable():
@@ -81,10 +84,14 @@ class GameTile:
 					self.hasBeenClicked = True
 					if self.ship != None:
 						self.setStatus(self.HIT)
+						#Hit Sound
+						pg.mixer.Sound.play(self.explosion_sound)
 						self.ship.hit()
 						self.shipDestroyedAnimation()
 					else:
 						self.setStatus(self.MISS)
+						#Miss Sound
+						pg.mixer.Sound.play(self.splash_sound)
 					return True
 		return False
 
@@ -312,13 +319,23 @@ def drawGrid(surface,grid_size):
 	for i in range(300, 300+24*grid_size+1, 24):
 		pg.draw.line(surface, BLACK, (1000, i), (1000+24*grid_size, i))
 
-def gameplay_sound_engine():
+#--------------------------
+# Music For In Game Play
+#--------------------------
+def gameplay_music_engine(volume_level):
 	pg.init()
 	pg.mixer.music.stop()
 	pg.mixer.music.load('sounds\MusicGunnerFight.ogg')
+	pg.mixer.music.set_volume(volume_level)
 	pg.mixer.music.play(-1)
 
-def RunGame(grid_size):
+def RunGame(grid_size, volume_level):
+	#Initialize sounds
+	#################################################################
+	pg.init()
+	gameplay_music_engine(volume_level)
+	game_over_sound = pg.mixer.Sound("sounds\SmallApplause.wav")
+	#################################################################
 
 	player1 = Player(True, 1, surface, grid_size)
 	player2 = Player(False, 2, surface, grid_size)
@@ -340,6 +357,7 @@ def RunGame(grid_size):
 			elif event.type == pg.KEYDOWN:
 				if event.key == pg.K_ESCAPE:
 					done = True
+					pg.mixer.music.stop()
 					#main_menu() call is where this will be sent
 					return
 				
@@ -394,6 +412,7 @@ def RunGame(grid_size):
 
 		if player1.allShipsDestroyed():
 			loopFinished = False
+			pg.mixer.Sound.play(game_over_sound)
 			font = pg.font.SysFont("none", 24)
 			text = font.render("Player 1 has won!", True,WHITE)
 			while loopFinished == False:
@@ -413,6 +432,7 @@ def RunGame(grid_size):
 			
 		if player2.allShipsDestroyed():
 			loopFinished = False
+			pg.mixer.Sound.play(game_over_sound)
 			font = pg.font.SysFont("none", 24)
 			text = font.render("Player 2 has won!", True,WHITE)
 			while loopFinished == False:
@@ -429,4 +449,3 @@ def RunGame(grid_size):
 			limboMode = False
 			player1 = Player(True, 1, surface, grid_size)
 			player2 = Player(False, 2, surface, grid_size)
-			

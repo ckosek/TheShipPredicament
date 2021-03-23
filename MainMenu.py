@@ -255,9 +255,10 @@ def set_grid_size(name, value):
 # Actual Game
 #--------------------------
 def start_the_game():
-	RunGame(grid_size)
+	global volume_level
+	RunGame(grid_size, volume_level)
+	background_music_loop()
 	main_menu()
-
 
 #--------------------------
 # Main Menu
@@ -383,7 +384,6 @@ def game_over_menu():
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()
-	volume_items = set_volume_items()
 	
 	game_over_sub = pm.Menu(h, w, 'Game Over', theme=mytheme)
 
@@ -396,7 +396,6 @@ def game_over_menu():
 	game_over_sub.set_sound(sound_engine)
 	
 	game_over_sub.mainloop(surface)
-
 
 #--------------------------
 # Main Statement
