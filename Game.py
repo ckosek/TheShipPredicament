@@ -343,7 +343,7 @@ def RunGame(grid_size, volume_level):
 
 	font = pg.font.SysFont("none", 24)
 	text2 = font.render("Click to begin turn", True,WHITE)
-	exitButton = Button(monitor_info.current_w /2 -75, monitor_info.current_h - monitor_info.current_h/4 - 25, 125, 50, RED, surface)
+	exitButton = Button(monitor_info.current_w /2 -62.5, monitor_info.current_h - monitor_info.current_h/4 - 25, 125, 50, RED, surface)
 	#Sounds begin playing after initialization of drawings
 	gameplay_music_engine(volume_level)
 	game_over_sound = pg.mixer.Sound("sounds\SmallApplause.wav")
@@ -405,7 +405,7 @@ def RunGame(grid_size, volume_level):
 		player2.drawTiles()
 		texttest = font.render("Exit to Menu", True, WHITE)
 		exitButton.draw()
-		surface.blit(texttest, (monitor_info.current_w/2 -65, monitor_info.current_h - monitor_info.current_h/4 - 5))
+		surface.blit(texttest, (monitor_info.current_w/2 -55, monitor_info.current_h - monitor_info.current_h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
 				text = font.render("Player 2's turn!", True, WHITE)
