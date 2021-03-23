@@ -405,7 +405,7 @@ def RunGame(grid_size, volume_level):
 		player2.drawTiles()
 		texttest = font.render("Exit to Menu", True, WHITE)
 		exitButton.draw()
-		surface.blit(texttest, (monitor_info.current_w/2 -55, monitor_info.current_h - monitor_info.current_h/4 - 5))
+		surface.blit(texttest, (monitor_info.current_w/2 - texttest.get_width() / 2, monitor_info.current_h - monitor_info.current_h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
 				text = font.render("Player 2's turn!", True, WHITE)
