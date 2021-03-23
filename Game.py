@@ -312,9 +312,14 @@ def drawGrid(surface,grid_size):
     for i in range(500, 500+24*grid_size+1, 24):
         pg.draw.line(surface, BLACK, (250, i), (250+24*grid_size, i))
 
-
+def gameplay_sound_engine():
+	pg.init()
+	pg.mixer.music.stop()
+	pg.mixer.music.load('sounds\MusicGunnerFight.ogg')
+	pg.mixer.music.play(-1)
 
 def RunGame(grid_size):
+
     player1 = Player(True, 1, surface, grid_size)
     player2 = Player(False, 2, surface, grid_size)
 
