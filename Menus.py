@@ -4,6 +4,7 @@ import sys
 import pygame as pg
 import pygame_menu as pm
 from pygame_menu import sound
+import Game
 from Game import RunGame
 
 #---------------------
@@ -256,9 +257,15 @@ def set_grid_size(name, value):
 #--------------------------
 def start_the_game():
 	global volume_level
-	RunGame(grid_size, volume_level)
+	
+	who_won = RunGame(grid_size, volume_level)
 	background_music_loop()
-	main_menu()
+
+	if who_won == 0:
+		main_menu()
+	else:
+		game_over_menu(who_won)
+	
 
 #--------------------------
 # Main Menu
@@ -339,10 +346,6 @@ def play_menu():
 	play_setting_sub.add_label(grid_str)
 	play_setting_sub.add_vertical_margin(30)
 	play_setting_sub.add_button('[ Confirm ]', start_the_game, font_color=color)
-	
-	#Used to test game over screen
-	#play_setting_sub.add_button('[ Confirm ]', game_over_menu, font_color=color)
-	
 	play_setting_sub.add_button('[ Back ]', pm.events.BACK, font_color=color)
 	play_setting_sub.set_sound(sound_engine)
 
@@ -364,7 +367,7 @@ def play_menu():
 #-------------------------------------------
 # Display Screen for Game Completion
 #-------------------------------------------
-def game_over_menu():
+def game_over_menu(who_won):
 	pg.init()
 	global surface
 	global color
@@ -375,11 +378,12 @@ def game_over_menu():
 	h = screen_res.current_h
 	w = screen_res.current_w
 
-	player_won = True
+	#If 1 Player 1 won, If 2 Player 2 won
+	player_won = who_won
 	Winner_Str = ''
-	if player_won:
+	if player_won == 1:
 		Winner_Str = 'Player 1 Wins'
-	else:
+	elif player_won == 2:
 		Winner_Str = 'Player 2 Wins'
 
 	mytheme = set_theme()
