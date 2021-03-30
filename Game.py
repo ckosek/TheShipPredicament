@@ -359,8 +359,8 @@ def RunGame(grid_size, volume_level):
 				if event.key == pg.K_ESCAPE:
 					done = True
 					pg.mixer.music.stop()
-					#main_menu() call is where this will be sent
-					return
+					#Return 0 for main menu
+					return 0
 				
 			if event.type == pg.MOUSEBUTTONDOWN:
 				if player2.getTurn() == True:
@@ -370,7 +370,8 @@ def RunGame(grid_size, volume_level):
 							if feels == True:
 								tileClicked = True
 					if exitButton.wasClicked(pg.mouse.get_pos()):
-						return 3
+						#Return 0 for main menu
+						return 0
 
 				if player1.getTurn() == True:		
 					for row in player2.getButtonTiles():
@@ -379,7 +380,8 @@ def RunGame(grid_size, volume_level):
 							if feels == True:
 								tileClicked = True
 					if exitButton.wasClicked(pg.mouse.get_pos()):
-						return 3
+						#Return 0 for main menu
+						return 0
 								
 				if limboMode == True:
 					if upNext == 2:
@@ -421,39 +423,9 @@ def RunGame(grid_size, volume_level):
 		if player1.allShipsDestroyed():
 			loopFinished = False
 			pg.mixer.Sound.play(game_over_sound)
-			font = pg.font.SysFont("none", 24)
-			text = font.render("Player 1 has won!", True,WHITE)
-			while loopFinished == False:
-				for event in pg.event.get():
-					if event.type == pg.QUIT:
-						pg.quit()
-						sys.exit()
-					if event.type == pg.MOUSEBUTTONDOWN:
-						loopFinished = True
-				surface.fill(BLACK)
-				surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
-				pg.display.update()
-			upNext = 2
-			limboMode = False
-			player1 = Player(True, 1, surface, grid_size)
-			player2 = Player(False, 2, surface, grid_size)
+			return 2
 			
 		if player2.allShipsDestroyed():
 			loopFinished = False
 			pg.mixer.Sound.play(game_over_sound)
-			font = pg.font.SysFont("none", 24)
-			text = font.render("Player 2 has won!", True,WHITE)
-			while loopFinished == False:
-				for event in pg.event.get():
-					if event.type == pg.QUIT:
-						pg.quit()
-						sys.exit()
-					if event.type == pg.MOUSEBUTTONDOWN:
-						loopFinished = True
-				surface.fill(BLACK)
-				surface.blit(text, (monitor_info.current_w /2 - text.get_width() / 2, 50))
-				pg.display.update()
-			upNext = 2
-			limboMode = False
-			player1 = Player(True, 1, surface, grid_size)
-			player2 = Player(False, 2, surface, grid_size)
+			return 1
