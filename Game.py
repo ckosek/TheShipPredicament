@@ -312,29 +312,6 @@ class Ship:
 #--------------------------
 # Grid creation
 #--------------------------
-#def drawGrid(surface,grid_size):
-
-#	center_offset_left = (w/2) - 48 - grid_size
-#	center_offset_right = (w/2) + 48 + grid_size
-
-#	#First grid
-#	#Vertical Lines
-#	for i in range(0, 24*grid_size+1, 24):
-#		pg.draw.line(surface, text_color, (i, h/3), (i, (h/3)+24*grid_size))
-#	# Horizontal Lines
-#	for i in range(int(h/3), int(h/3)+24*grid_size+1, 24):
-#		pg.draw.line(surface, text_color, (0, i), (24*grid_size, i))
-
-#	#Second grid
-#	#Vertical Lines
-#	for i in range(w-24*grid_size, w, 24):
-#		pg.draw.line(surface, text_color, (i, (h/3)), (i, (h/3)+24*grid_size))
-#	# Horizontal Lines
-#	for i in range(int(h/3), int(h/3)+24*grid_size+1, 24):
-#		pg.draw.line(surface, text_color, (w, i), (w-24*grid_size, i))
-
-#	pg.draw.line(surface, text_color, (w-1, h/3), (w-1, (h/3)+(24*grid_size)))
-
 def drawGrid(surface,grid_size):
 
 	center_offset_left = int((w/2) - (24*5 + 24*grid_size))
@@ -350,8 +327,6 @@ def drawGrid(surface,grid_size):
 
 	#Second grid
 	#Vertical Lines
-	#for i in range(int(w-24*grid_size), int(w), 24):
-	#	pg.draw.line(surface, text_color, (i + center_offset_right, (h/3)), (i + center_offset_right, (h/3)+24*grid_size))
 	for i in range(center_offset_right, center_offset_right + 24*grid_size + 24, 24):
 		pg.draw.line(surface, text_color, (i, (h/3)), (i, (h/3)+24*grid_size))
 	# Horizontal Lines
