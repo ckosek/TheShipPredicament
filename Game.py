@@ -15,7 +15,6 @@ h = monitor_info.current_h
 clock = pg.time.Clock()
 FPS = 60
 
-
 #Color List for quick reference
 BLACK = (0,0,0)
 WHITE = (255,255,255)

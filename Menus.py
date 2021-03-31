@@ -144,7 +144,6 @@ def create_sound_engine():
 	engine.set_sound(sound.SOUND_TYPE_WIDGET_SELECTION, sound.SOUND_EXAMPLE_WIDGET_SELECTION)
 	return engine
 
-
 #Method: Begins background music play, stops upon exiting the game
 def background_music_loop():
 	global volume_level
@@ -268,7 +267,6 @@ def start_the_game():
 	else:
 		game_over_menu(who_won)
 	
-
 #--------------------------
 # Main Menu
 #--------------------------
@@ -402,10 +400,3 @@ def game_over_menu(who_won):
 	game_over_sub.set_sound(sound_engine)
 	
 	game_over_sub.mainloop(surface)
-
-#--------------------------
-# Main Statement
-#--------------------------
-if __name__ == '__main__':
-	background_music_loop()
-	main_menu()
