@@ -257,8 +257,10 @@ def set_grid_size(name, value):
 #--------------------------
 def start_the_game():
 	global volume_level
+	global color
+	global back_color
 	
-	who_won = RunGame(grid_size, volume_level)
+	who_won = RunGame(grid_size, volume_level, color, back_color)
 	background_music_loop()
 
 	if who_won == 0:
