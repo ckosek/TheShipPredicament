@@ -15,6 +15,29 @@ h = monitor_info.current_h
 clock = pg.time.Clock()
 FPS = 60
 
+#How fast the explosion will loop through all images
+ExplosionSpeed = 10
+#How fast the splash will loop through all images
+SplashSpeed = 10
+#Declares the images used for the explosion animation
+Explosion_Images = [
+	pg.image.load("img/explosion0.png"), pg.image.load("img/explosion1.png"), pg.image.load("img/explosion2.png"),
+	pg.image.load("img/explosion3.png"), pg.image.load("img/explosion4.png"), pg.image.load("img/explosion5.png"),
+	pg.image.load("img/explosion6.png"), pg.image.load("img/explosion7.png"), pg.image.load("img/explosion8.png"),
+	pg.image.load("img/explosion9.png"), pg.image.load("img/explosion10.png"), pg.image.load("img/explosion11.png"),
+	pg.image.load("img/explosion12.png"), pg.image.load("img/explosion13.png"), pg.image.load("img/explosion14.png"),
+	pg.image.load("img/explosion15.png"),  pg.image.load("img/explosion16.png"),  pg.image.load("img/explosion17.png"),
+	pg.image.load("img/explosion18.png"), pg.image.load("img/explosion19.png"), pg.image.load("img/explosion20.png"),
+	pg.image.load("img/explosion21.png"), pg.image.load("img/explosion22.png"), pg.image.load("img/explosion23.png"),
+	pg.image.load("img/explosion24.png")
+]
+#Declares the images used for the splash animation
+Splash_Images = [
+	pg.image.load("img/splash0.png"), pg.image.load("img/splash1.png"), pg.image.load("img/splash2.png"),
+	pg.image.load("img/splash3.png"), pg.image.load("img/splash4.png"), pg.image.load("img/splash5.png"),
+	pg.image.load("img/splash0.png"), pg.image.load("img/splash0.png")
+]
+
 #Color List for quick reference
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -91,11 +114,14 @@ class GameTile:
 						#Hit Sound
 						pg.mixer.Sound.play(self.explosion_sound)
 						self.ship.hit()
+						self.blowup_animation(self.xPos, self.yPos)
 						self.shipDestroyedAnimation()
 					else:
 						self.setStatus(self.MISS)
 						#Miss Sound
 						pg.mixer.Sound.play(self.splash_sound)
+						self.splash_animation(self.xPos, self.yPos)
+						
 					return True
 		return False
 
@@ -109,6 +135,20 @@ class GameTile:
 
 	def setClickable(self, setting):
 		self.isClickableOverride = setting
+
+	def blowup_animation(self, xPos, yPos):
+		for image in Explosion_Images:
+			image = pg.transform.scale(image, (24,24))
+			self.surface.blit(image, (xPos, yPos))
+			pg.display.flip()
+			clock.tick(ExplosionSpeed)
+
+	def splash_animation(self, xPos, yPos):
+		for image in Splash_Images:
+			image = pg.transform.scale(image, (24,24))
+			self.surface.blit(image, (xPos, yPos))
+			pg.display.flip()
+			clock.tick(SplashSpeed)
 
 	def draw(self, playerTurn):
 		self.color = back_color
