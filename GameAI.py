@@ -252,10 +252,10 @@ class Player:
 
 			self.buttonTiles.append(temp)
 		self.distributeShips(grid_size)
-		print('Player Grid ButtonTileTopRight:', self.buttonTiles[0][0].xPos, self.buttonTiles[0][0].yPos)
-		print('Player Grid ButtonTileBottomRight:', self.buttonTiles[0][9].xPos, self.buttonTiles[0][9].yPos)
-		print('Player Grid ButtonTileTopLeft:', self.buttonTiles[9][0].xPos, self.buttonTiles[9][0].yPos)
-		print('Player Grid ButtonTileBottomLeft:', self.buttonTiles[9][9].xPos, self.buttonTiles[9][9].yPos)
+		#print('Player Grid ButtonTileTopRight:', self.buttonTiles[0][0].xPos, self.buttonTiles[0][0].yPos)
+		#print('Player Grid ButtonTileBottomRight:', self.buttonTiles[0][9].xPos, self.buttonTiles[0][9].yPos)
+		#print('Player Grid ButtonTileTopLeft:', self.buttonTiles[9][0].xPos, self.buttonTiles[9][0].yPos)
+		#print('Player Grid ButtonTileBottomLeft:', self.buttonTiles[9][9].xPos, self.buttonTiles[9][9].yPos)
 			
 	def drawTiles(self):
 		for row in self.buttonTiles:
