@@ -17,7 +17,7 @@ clock = pg.time.Clock()
 FPS = 60
 
 #How fast the explosion will loop through all images
-ExplosionSpeed = 10
+ExplosionSpeed = 25
 #How fast the splash will loop through all images
 SplashSpeed = 10
 #Declares the images used for the explosion animation
