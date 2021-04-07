@@ -5,7 +5,8 @@ import pygame as pg
 import pygame_menu as pm
 from pygame_menu import sound
 import Game
-from Game import RunGame
+from Game import RunGame as RunGame
+from GameAI import RunGame as AIRunGame
 
 #---------------------
 #Constants and Globals
@@ -258,8 +259,14 @@ def start_the_game():
 	global volume_level
 	global color
 	global back_color
-	
-	who_won = RunGame(grid_size, volume_level, color, back_color)
+	global players
+	global difficulty
+
+	if players == 1:
+		who_won = AIRunGame(grid_size, volume_level, color, back_color, difficulty)
+	else:
+		who_won = RunGame(grid_size, volume_level, color, back_color)
+
 	background_music_loop()
 
 	if who_won == 0:
@@ -378,13 +385,15 @@ def game_over_menu(who_won):
 	h = screen_res.current_h
 	w = screen_res.current_w
 
-	#If 1 Player 1 won, If 2 Player 2 won
+	#If 1 Player 1 won, If 2 Player 2 won, If 3 AI won
 	player_won = who_won
 	Winner_Str = ''
 	if player_won == 1:
 		Winner_Str = 'Player 1 Wins'
 	elif player_won == 2:
 		Winner_Str = 'Player 2 Wins'
+	elif player_won == 3:
+		Winner_Str = 'AI Player Wins'
 
 	mytheme = set_theme()
 	sound_engine = create_sound_engine()

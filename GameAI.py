@@ -106,6 +106,7 @@ class GameTile:
 		self.splash_sound = pg.mixer.Sound("sounds\Splash.wav")
 
 	def wasClicked(self, clickPos):
+		#print('My Click: ',clickPos)
 		if self.isClickable():
 			if clickPos[0] > self.xPos and clickPos[0] < self.xPos + self.width:
 				if clickPos[1] > self.yPos and clickPos[1] < self.yPos + self.height:
@@ -124,6 +125,26 @@ class GameTile:
 						self.splash_animation(self.xPos, self.yPos)
 						
 					return True
+		return False
+
+	def wasAIClicked(self):
+		#print('My Click: ',clickPos)
+		if self.isClickable():
+			self.hasBeenClicked = True
+			if self.ship != None:
+				self.setStatus(self.HIT)
+				#Hit Sound
+				pg.mixer.Sound.play(self.explosion_sound)
+				self.ship.hit()
+				self.blowup_animation(self.xPos, self.yPos)
+				self.shipDestroyedAnimation()
+			else:
+				self.setStatus(self.MISS)
+				#Miss Sound
+				pg.mixer.Sound.play(self.splash_sound)
+				self.splash_animation(self.xPos, self.yPos)
+						
+			return True
 		return False
 
 	def isClickable(self):
@@ -231,6 +252,10 @@ class Player:
 
 			self.buttonTiles.append(temp)
 		self.distributeShips(grid_size)
+		#print('Player Grid ButtonTileTopRight:', self.buttonTiles[0][0].xPos, self.buttonTiles[0][0].yPos)
+		#print('Player Grid ButtonTileBottomRight:', self.buttonTiles[0][9].xPos, self.buttonTiles[0][9].yPos)
+		#print('Player Grid ButtonTileTopLeft:', self.buttonTiles[9][0].xPos, self.buttonTiles[9][0].yPos)
+		#print('Player Grid ButtonTileBottomLeft:', self.buttonTiles[9][9].xPos, self.buttonTiles[9][9].yPos)
 			
 	def drawTiles(self):
 		for row in self.buttonTiles:
@@ -322,7 +347,146 @@ class Player:
 				if value == False:
 					return False
 		return True
+
+class AI:
+	#Constants
+	LEFT = 0
+	UP = 1
+	RIGHT = 2
+	DOWN = 3
+	
+	def __init__(self, setting, playerNumber, surface, grid_size, difficulty):
+		self.gridSize = grid_size
+		self.myDifficulty = difficulty
+		self.myTurn = setting
+		self.playerNumber = playerNumber
+		self.surface = surface
+		self.buttonTiles = []
+		self.ships = [Ship(5), Ship(4), Ship(3), Ship(3), Ship(2)]
+		for i in range(grid_size):
+			temp = []
+			for j in range(grid_size):
+				if self.playerNumber == 1:
+					temp.append(GameTile(int((w/2) - (24*5 + 24*grid_size)) + 24*i, int(h/3) + 24*j, 24, 24, 1, self.surface))
+				else:
+					temp.append(GameTile(int((w/2) + (24*5 + 24*grid_size)) - 24*i - 24, int(h/3) + 24*j, 24, 24, 1, self.surface))
+
+			self.buttonTiles.append(temp)
+		self.distributeShips(grid_size)
+		
+	def makeMove(self, playerButtonTiles):
+		if self.myDifficulty == 1:
+			return self.makeEasyMove(playerButtonTiles)
+		elif self.myDifficulty == 2:
+			self.makeMedMove(playerButtonTiles)
+		elif self.myDifficulty == 3:
+			self.makeHardMove(playerButtonTiles)
+		else:
+			return 0
+
+	def makeEasyMove(self, playerButtonTiles):
+		row = random.randint(0, self.gridSize-1)
+		col = random.randint(0, self.gridSize-1)
+
+		return playerButtonTiles[row][col]
+
+	def makeMedMove(self, playerButtonTiles):
+		return playerButtonTiles[0][0]
+
+	def makeHardMove(self, playerButtonTiles):
+		return playerButtonTiles[0][0]
+
+	def drawTiles(self):
+		for row in self.buttonTiles:
+			for tile in row:
+				tile.draw(self.myTurn)
 				
+	def flipTurn(self):
+		self.myTurn = not self.myTurn
+
+	def getButtonTiles(self):
+		return self.buttonTiles
+
+	def distributeShips(self, grid_size):
+		for ship in self.ships:
+			done = False
+			while not done:
+				row = random.randint(0, grid_size-1)
+				column = random.randint(0, grid_size-1)
+				direction = random.randint(self.LEFT, self.DOWN)
+				if self.checkIfSectionEmpty(row, column, direction, ship):
+					self.placeShip(row, column, direction, ship)
+					done = True
+
+	def getTurn(self):
+		return self.myTurn
+
+	def checkIfSectionEmpty(self, row, column, direction, ship):
+		if self.buttonTiles[row][column].getShip() == None:
+			if direction == self.LEFT:
+				if column - ship.getLength() < 0:
+					return False
+				else:
+					for i in range(column, column - ship.getLength(), -1):
+						if self.buttonTiles[row][i].getShip() != None:
+							return False
+					return True
+				
+			elif direction == self.UP:
+				if row - ship.getLength() < 0:
+					return False
+				else:
+					for i in range(row, row - ship.getLength(), -1):
+						if self.buttonTiles[i][column].getShip() != None:
+							return False
+					return True
+				
+			elif direction == self.RIGHT:
+				if column + ship.getLength() > 5:
+					return False
+				else:
+					for i in range(column, column + ship.getLength()):
+						if self.buttonTiles[row][i].getShip() != None:
+							return False
+					return True
+				
+			elif direction == self.DOWN:
+				if row + ship.getLength() > 5:
+					return False
+				else:
+					for i in range(row, row + ship.getLength()):
+						if self.buttonTiles[i][column].getShip() != None:
+							return False
+					return True
+		else:
+			return False
+
+	def placeShip(self, row, column, direction, ship):
+		if direction == self.LEFT:
+			for i in range(column, column - ship.getLength(), -1):
+				self.buttonTiles[row][i].setShip(ship)
+				
+		if direction == self.UP:
+			for i in range(row, row - ship.getLength(), -1):
+				self.buttonTiles[i][column].setShip(ship)
+				
+		if direction == self.RIGHT:
+			for i in range(column, column + ship.getLength(), 1):
+				self.buttonTiles[row][i].setShip(ship)
+				
+		if direction == self.DOWN:
+			for i in range(row, row + ship.getLength(), 1):
+				self.buttonTiles[i][column].setShip(ship)
+	def getPlayerNumber(self):
+		return self.playerNumber
+
+	def allShipsDestroyed(self):
+		for ship in self.ships:
+			for value in ship.getHitList():
+				if value == False:
+					return False
+		return True
+			
 class Ship:
 	def __init__(self, length):
 		self.length = length
@@ -386,7 +550,7 @@ def gameplay_music_engine(volume_level):
 #--------------------------
 # Gameplay Controller
 #--------------------------
-def RunGame(grid_size, volume_level, color_text, color_background):
+def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 	global text_color
 	global back_color
 
@@ -396,7 +560,7 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 	back_color = color_background
 
 	player1 = Player(True, 1, surface, grid_size)
-	player2 = Player(False, 2, surface, grid_size)
+	player2 = AI(False, 2, surface, grid_size, difficulty)
 
 	upNext = 2
 	limboMode = False 
@@ -425,11 +589,10 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 				
 			if event.type == pg.MOUSEBUTTONDOWN:
 				if player2.getTurn() == True:
-					for row in player1.getButtonTiles():
-						for tile in row:
-							feels = tile.wasClicked(pg.mouse.get_pos())
-							if feels == True:
-								tileClicked = True
+					tile = player2.makeMove(player1.buttonTiles)
+					feels = tile.wasAIClicked()
+					if feels == True:
+						tileClicked = True
 					if exitButton.wasClicked(pg.mouse.get_pos()):
 						#Return 0 for main menu
 						return 0
@@ -471,7 +634,7 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 		surface.blit(exit_text, (w/2 - exit_text.get_width() / 2, h - h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
-				text = font.render("Player 2's turn!", True, text_color)
+				text = font.render("AI's turn!", True, text_color)
 			else:
 				text = font.render("Player 1's turn!", True, text_color)
 			surface.blit(text,(w /2 - text.get_width() / 2, 50))
@@ -483,7 +646,7 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 
 		if player1.allShipsDestroyed():
 			pg.mixer.Sound.play(game_over_sound)
-			return 2
+			return 3
 			
 		if player2.allShipsDestroyed():
 			pg.mixer.Sound.play(game_over_sound)
