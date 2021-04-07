@@ -17,7 +17,7 @@ clock = pg.time.Clock()
 FPS = 60
 
 #How fast the explosion will loop through all images
-ExplosionSpeed = 10
+ExplosionSpeed = 25
 #How fast the splash will loop through all images
 SplashSpeed = 10
 #Declares the images used for the explosion animation
@@ -142,8 +142,7 @@ class GameTile:
 				self.setStatus(self.MISS)
 				#Miss Sound
 				pg.mixer.Sound.play(self.splash_sound)
-				self.splash_animation(self.xPos, self.yPos)
-						
+				self.splash_animation(self.xPos, self.yPos)			
 			return True
 		return False
 
@@ -174,19 +173,30 @@ class GameTile:
 
 	def draw(self, playerTurn):
 		self.color = back_color
-		if self.ship != None and (playerTurn == True or self.status == self.HIT or self.status == self.MISS):
-			if self.playerNumber == 2:
-				value = self.getShip().getLength()
-				self.color = (100 + value * 30, 100 + value * 30, 100 + value * 30 )
-				if back_color == WHITE:
-					self.color = (0 + value * 30, 0 + value * 30, 0 + value * 30)
-			if self.playerNumber == 1:
-				value = self.getShip().getLength()
-				self.color = (100 + value * 30, 100 + value * 30, 100 + value * 30 )
-				if back_color == WHITE:
-					self.color = (0 + value * 30, 0 + value * 30, 0 + value * 30)
-		elif self.playerNumber == 2:
+		if self.playerNumber == 1 and self.ship != None:
+			value = self.getShip().getLength()
+			self.color = (100 + value * 30, 100 + value * 30, 100 + value * 30 )
+			if back_color == WHITE:
+				self.color = (0 + value * 30, 0 + value * 30, 0 + value * 30)
+		if self.playerNumber == 2 and self.ship != None:
 			self.color = back_color
+				
+		pg.draw.rect(self.surface, self.color, self.rectangle)
+
+		if not self.isClickable():
+			if self.status == self.HIT:
+				pg.draw.line(self.surface, text_color, (self.xPos, self.yPos), (24 + self.xPos, 24 + self.yPos))
+				pg.draw.line(self.surface, text_color, (24 + self.xPos, self.yPos), (self.xPos, 24 + self.yPos))
+			elif self.status == self.MISS:
+				pg.draw.circle(self.surface, text_color, (12 + self.xPos,12 + self.yPos), 12, 1)
+
+	def drawAi(self, playerTurn):
+		self.color = back_color
+		if self.ship != None and (self.status == self.HIT or self.status == self.MISS):
+			value = self.getShip().getLength()
+			self.color = (100 + value * 30, 100 + value * 30, 100 + value * 30 )
+			if back_color == WHITE:
+				self.color = (0 + value * 30, 0 + value * 30, 0 + value * 30)
 				
 		pg.draw.rect(self.surface, self.color, self.rectangle)
 
@@ -204,11 +214,11 @@ class GameTile:
 		if self.ship.checkDestroyed():
 			font = pg.font.SysFont("none", 24)
 			if self.playerNumber == 1:
-				text = font.render("Player 2 ship destroyed!", True, text_color)
+				text = font.render("AI ship destroyed!", True, text_color)
 				taunts = ["'You're a natural'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", 
 					"'Are you even trying?'", "'Oops, did I do that?'", "'Was that ship made of paper?'"]
 				text2 = font.render(taunts[random.randint(0, 5)], True, text_color)
-			if self. playerNumber == 2:
+			if self.playerNumber == 2:
 				text = font.render("Player 1 ship destroyed!", True, text_color)
 				taunts = ["'That was easy.'", "'Supreme Leader South will love that'", "'RIP Jack Sparrow'", "'FRESH MEAT!'", 
 					"'This predicament will be over in no time'", "'We live in a society'" ]
@@ -412,10 +422,10 @@ class AI:
 
 		return playerButtonTiles[row][col]
 
-	def drawTiles(self):
+	def drawAiTiles(self):
 		for row in self.buttonTiles:
 			for tile in row:
-				tile.draw(self.myTurn)
+				tile.drawAi(self.myTurn)
 				
 	def flipTurn(self):
 		self.myTurn = not self.myTurn
@@ -605,13 +615,13 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 				
 			if event.type == pg.MOUSEBUTTONDOWN:
 				if player2.getTurn() == True:
+					if exitButton.wasClicked(pg.mouse.get_pos()):
+						#Return 0 for main menu
+						return 0
 					tile = player2.makeMove(player1.buttonTiles)
 					feels = tile.wasAIClicked()
 					if feels == True:
 						tileClicked = True
-					if exitButton.wasClicked(pg.mouse.get_pos()):
-						#Return 0 for main menu
-						return 0
 
 				if player1.getTurn() == True:		
 					for row in player2.getButtonTiles():
@@ -644,19 +654,23 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 
 		surface.fill(back_color)
 		player1.drawTiles()
-		player2.drawTiles()
+		player2.drawAiTiles()
 		exit_text = font.render("Exit to Menu", True, back_color)
 		exitButton.draw()
 		surface.blit(exit_text, (w/2 - exit_text.get_width() / 2, h - h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
-				text = font.render("AI's turn!", True, text_color)
+				text = font.render("AI's turn! Click to continue", True, text_color)
 			else:
 				text = font.render("Player 1's turn!", True, text_color)
 			surface.blit(text,(w /2 - text.get_width() / 2, 50))
 		else:
-			text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, text_color)
-			surface.blit(text,(w /2 - text.get_width() / 2, 50))
+			if upNext == 1:
+				text = font.render("Player " + str(upNext) + " is up next! Click to continue", True, text_color)
+				surface.blit(text,(w /2 - text.get_width() / 2, 50))
+			else:
+				text = font.render("AI Player is up next! Click to continue", True, text_color)
+				surface.blit(text,(w /2 - text.get_width() / 2, 50))
 		drawGrid(surface, grid_size)
 		pg.display.update()
 
