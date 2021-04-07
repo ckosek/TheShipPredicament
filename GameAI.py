@@ -378,9 +378,9 @@ class AI:
 		if self.myDifficulty == 1:
 			return self.makeEasyMove(playerButtonTiles)
 		elif self.myDifficulty == 2:
-			self.makeMedMove(playerButtonTiles)
+			return self.makeMedMove(playerButtonTiles)
 		elif self.myDifficulty == 3:
-			self.makeHardMove(playerButtonTiles)
+			return self.makeHardMove(playerButtonTiles)
 		else:
 			return 0
 
@@ -394,7 +394,23 @@ class AI:
 		return playerButtonTiles[0][0]
 
 	def makeHardMove(self, playerButtonTiles):
-		return playerButtonTiles[0][0]
+		row = 0
+		col = 0
+		FoundShip = False
+
+		for value in playerButtonTiles:
+			for tile in value:
+				if tile.status == -1:
+					if tile.ship != None:
+						FoundShip = True
+						break
+				col += 1
+			if FoundShip:
+				break
+			row += 1
+			col = 0
+
+		return playerButtonTiles[row][col]
 
 	def drawTiles(self):
 		for row in self.buttonTiles:
