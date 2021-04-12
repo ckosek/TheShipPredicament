@@ -212,6 +212,7 @@ class GameTile:
 
 	def shipDestroyedAnimation(self):
 		if self.ship.checkDestroyed():
+			new_surface = pg.display.set_mode((0,0),pg.FULLSCREEN)
 			pg.event.clear()
 			font = pg.font.SysFont("none", 24)
 			if self.playerNumber == 1:
@@ -233,9 +234,10 @@ class GameTile:
 						sys.exit()
 					if event.type == pg.MOUSEBUTTONDOWN:
 							loopFinished = True
-				self.surface.fill(back_color)
-				self.surface.blit(text, (w /2 - text.get_width() / 2, 50))
-				self.surface.blit(text2, (w /2 - text.get_width() / 2, h / 2))
+				new_surface.fill(back_color)
+				new_surface.blit(text, (w /2 - text.get_width() / 2, 50))
+				new_surface.blit(text2, (w /2 - text.get_width() / 2, h / 2))
+				self.surface.blit(new_surface, (w,h))
 				pg.display.update()
 				if needWait == True:
 					pg.time.wait(1500)
