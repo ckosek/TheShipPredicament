@@ -181,18 +181,20 @@ class GameTile:
 
 	def shipDestroyedAnimation(self):
 		if self.ship.checkDestroyed():
+			pg.event.clear()
 			font = pg.font.SysFont("none", 24)
 			if self.playerNumber == 1:
 				text = font.render("Player 2 ship destroyed!", True, text_color)
 				taunts = ["'You're a natural'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", 
 					"'Are you even trying?'", "'Oops, did I do that?'", "'Was that ship made of paper?'"]
 				text2 = font.render(taunts[random.randint(0, 5)], True, text_color)
-			if self. playerNumber == 2:
+			if self.playerNumber == 2:
 				text = font.render("Player 1 ship destroyed!", True, text_color)
 				taunts = ["'That was easy.'", "'Supreme Leader South will love that'", "'RIP Jack Sparrow'", "'FRESH MEAT!'", 
 					"'This predicament will be over in no time'", "'We live in a society'" ]
 				text2 = font.render(taunts[random.randint(0, 5)], True, text_color)
 			loopFinished = False
+			needWait = True
 			while loopFinished == False:
 				for event in pg.event.get():
 					if event.type == pg.QUIT:
@@ -200,10 +202,13 @@ class GameTile:
 						sys.exit()
 					if event.type == pg.MOUSEBUTTONDOWN:
 							loopFinished = True
-				self.surface.fill(BLACK)
+				self.surface.fill(back_color)
 				self.surface.blit(text, (w /2 - text.get_width() / 2, 50))
 				self.surface.blit(text2, (w /2 - text.get_width() / 2, h / 2))
 				pg.display.update()
+				if needWait == True:
+					pg.time.wait(1500)
+					needWait = False
 
 	def getShip(self):
 		return self.ship
@@ -400,6 +405,7 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 
 	upNext = 2
 	limboMode = False 
+	tileClicked = False
 
 	font = pg.font.SysFont("none", 24)
 	text2 = font.render("Click to begin turn", True, text_color)
@@ -411,7 +417,6 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 
 	while True:
 		#Checking for game events'
-		tileClicked = False
 		for event in pg.event.get():
 			if event.type == pg.QUIT:
 				pg.quit()
@@ -430,9 +435,6 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 							feels = tile.wasClicked(pg.mouse.get_pos())
 							if feels == True:
 								tileClicked = True
-					if exitButton.wasClicked(pg.mouse.get_pos()):
-						#Return 0 for main menu
-						return 0
 
 				if player1.getTurn() == True:		
 					for row in player2.getButtonTiles():
@@ -440,9 +442,10 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 							feels = tile.wasClicked(pg.mouse.get_pos())
 							if feels == True:
 								tileClicked = True
-					if exitButton.wasClicked(pg.mouse.get_pos()):
-						#Return 0 for main menu
-						return 0
+				
+				if exitButton.wasClicked(pg.mouse.get_pos()):
+					#Return 0 for main menu
+					return 0
 								
 				if limboMode == True:
 					if upNext == 2:
@@ -456,12 +459,14 @@ def RunGame(grid_size, volume_level, color_text, color_background):
 			
 							
 			if tileClicked == True:
+				pg.event.clear()
 				if player1.getTurn() == True:
 					player1.flipTurn()
 					limboMode = True
 				elif player2.getTurn() == True:
 					player2.flipTurn()
 					limboMode = True
+				tileClicked = False
 
 		surface.fill(back_color)
 		player1.drawTiles()
