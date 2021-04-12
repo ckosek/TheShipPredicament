@@ -707,17 +707,17 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 					pg.mixer.music.stop()
 					#Return 0 for main menu
 					return 0
-				
-			if event.type == pg.MOUSEBUTTONDOWN:
-				if player2.getTurn() == True:
-					if exitButton.wasClicked(pg.mouse.get_pos()):
-						#Return 0 for main menu
-						return 0
-					tile = player2.makeMove(player1.buttonTiles)
-					feels = tile.wasAIClicked()
-					if feels == True:
-						tileClicked = True
+			
+			if player2.getTurn() == True:
+				if exitButton.wasClicked(pg.mouse.get_pos()):
+					#Return 0 for main menu
+					return 0
+				tile = player2.makeMove(player1.buttonTiles)
+				feels = tile.wasAIClicked()
+				if feels == True:
+					tileClicked = True	
 
+			if event.type == pg.MOUSEBUTTONDOWN:
 				if player1.getTurn() == True:		
 					for row in player2.getButtonTiles():
 						for tile in row:
