@@ -349,7 +349,8 @@ def play_menu():
 	play_setting_sub = pm.Menu(h, w, 'Confirm Settings', theme=mytheme)
 
 	play_setting_sub.add_label(player_str)
-	play_setting_sub.add_label(difficulty_str)
+	if players == 1:
+		play_setting_sub.add_label(difficulty_str)
 	play_setting_sub.add_label(grid_str)
 	play_setting_sub.add_vertical_margin(30)
 	play_setting_sub.add_button('[ Confirm ]', start_the_game, font_color=color)
@@ -362,7 +363,8 @@ def play_menu():
 	play_sub.add_label('Apply Selected Item')
 	play_sub.add_vertical_margin(30)
 	play_sub.add_selector('Players ', [('1 Player', 1), ('2 Player', 2)], default=player_default, onreturn=set_players, font_color=color)
-	play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], default=difficulty_default, onreturn=set_difficulty, font_color=color)
+	if players == 1:
+		play_sub.add_selector('Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 3)], default=difficulty_default, onreturn=set_difficulty, font_color=color)
 	play_sub.add_selector('Grid Size ', [('7 x 7', 7), ('10 x 10', 10), ('15 x 15', 15)], default=grid_default, onreturn=set_grid_size, font_color=color)
 	play_sub.add_button('[ Go ]', play_setting_sub, font_color=color)
 	play_sub.add_vertical_margin(50)

@@ -212,6 +212,7 @@ class GameTile:
 
 	def shipDestroyedAnimation(self):
 		if self.ship.checkDestroyed():
+			pg.event.clear()
 			font = pg.font.SysFont("none", 24)
 			if self.playerNumber == 1:
 				text = font.render("AI ship destroyed!", True, text_color)
@@ -224,6 +225,7 @@ class GameTile:
 					"'This predicament will be over in no time'", "'We live in a society'" ]
 				text2 = font.render(taunts[random.randint(0, 5)], True, text_color)
 			loopFinished = False
+			needWait = True
 			while loopFinished == False:
 				for event in pg.event.get():
 					if event.type == pg.QUIT:
@@ -231,10 +233,13 @@ class GameTile:
 						sys.exit()
 					if event.type == pg.MOUSEBUTTONDOWN:
 							loopFinished = True
-				self.surface.fill(BLACK)
+				self.surface.fill(back_color)
 				self.surface.blit(text, (w /2 - text.get_width() / 2, 50))
 				self.surface.blit(text2, (w /2 - text.get_width() / 2, h / 2))
 				pg.display.update()
+				if needWait == True:
+					pg.time.wait(1500)
+					needWait = False
 
 	def getShip(self):
 		return self.ship
@@ -262,10 +267,6 @@ class Player:
 
 			self.buttonTiles.append(temp)
 		self.distributeShips(grid_size)
-		#print('Player Grid ButtonTileTopRight:', self.buttonTiles[0][0].xPos, self.buttonTiles[0][0].yPos)
-		#print('Player Grid ButtonTileBottomRight:', self.buttonTiles[0][9].xPos, self.buttonTiles[0][9].yPos)
-		#print('Player Grid ButtonTileTopLeft:', self.buttonTiles[9][0].xPos, self.buttonTiles[9][0].yPos)
-		#print('Player Grid ButtonTileBottomLeft:', self.buttonTiles[9][9].xPos, self.buttonTiles[9][9].yPos)
 			
 	def drawTiles(self):
 		for row in self.buttonTiles:
@@ -684,7 +685,8 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 	player2 = AI(False, 2, surface, grid_size, difficulty)
 
 	upNext = 2
-	limboMode = False 
+	limboMode = False
+	tileClicked = False
 
 	font = pg.font.SysFont("none", 24)
 	text2 = font.render("Click to begin turn", True, text_color)
@@ -696,7 +698,6 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 
 	while True:
 		#Checking for game events'
-		tileClicked = False
 		for event in pg.event.get():
 			if event.type == pg.QUIT:
 				pg.quit()
@@ -718,15 +719,15 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 					tileClicked = True	
 
 			if event.type == pg.MOUSEBUTTONDOWN:
-				if player1.getTurn() == True:		
+				if player1.getTurn() == True:
+					if exitButton.wasClicked(pg.mouse.get_pos()):
+						#Return 0 for main menu
+						return 0
 					for row in player2.getButtonTiles():
 						for tile in row:
 							feels = tile.wasClicked(pg.mouse.get_pos())
 							if feels == True:
 								tileClicked = True
-					if exitButton.wasClicked(pg.mouse.get_pos()):
-						#Return 0 for main menu
-						return 0
 								
 				if limboMode == True:
 					if upNext == 2:
@@ -737,15 +738,16 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 						player1.flipTurn()
 						upNext = 2
 						limboMode = False
-			
-							
+						
 			if tileClicked == True:
+				pg.event.clear()
 				if player1.getTurn() == True:
 					player1.flipTurn()
 					limboMode = True
 				elif player2.getTurn() == True:
 					player2.flipTurn()
 					limboMode = True
+				tileClicked = False
 
 		surface.fill(back_color)
 		player1.drawTiles()
@@ -755,7 +757,7 @@ def RunGame(grid_size, volume_level, color_text, color_background, difficulty):
 		surface.blit(exit_text, (w/2 - exit_text.get_width() / 2, h - h/4 - 5))
 		if not limboMode:
 			if upNext == 1:
-				text = font.render("AI's turn! Click to continue", True, text_color)
+				text = font.render("AI's turn!", True, text_color)
 			else:
 				text = font.render("Player 1's turn!", True, text_color)
 			surface.blit(text,(w /2 - text.get_width() / 2, 50))
