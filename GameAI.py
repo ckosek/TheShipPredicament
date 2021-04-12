@@ -372,6 +372,9 @@ class AI:
 		self.playerNumber = playerNumber
 		self.surface = surface
 		self.buttonTiles = []
+		self.AIrow = 0
+		self.AIcol = 0
+		self.AIFoundShip = False
 		self.ships = [Ship(5), Ship(4), Ship(3), Ship(3), Ship(2)]
 		for i in range(grid_size):
 			temp = []
@@ -401,7 +404,99 @@ class AI:
 		return playerButtonTiles[row][col]
 
 	def makeMedMove(self, playerButtonTiles):
-		return playerButtonTiles[0][0]
+		
+		if self.AIFoundShip:
+			row = self.AIrow
+			col = self.AIcol
+
+			if row == 0 and col == self.gridSize - 1:
+				rand = random.randint(0, 1)
+				if rand == 0:
+					row += 1
+				else:
+					col += 1
+			elif col == 0 and row == self.gridSize - 1:
+				rand = random.randint(0, 1)
+				if rand == 0:
+					row -= 1
+				else:
+					col += 1
+			elif col == 0 and row == 0:
+				rand = random.randint(0, 1)
+				if rand == 0:
+					row += 1
+				else:
+					col += 1
+			elif col == self.gridSize - 1 and row == self.gridSize - 1:
+				rand = random.randint(0, 1)
+				if rand == 0:
+					row -= 1
+				else:
+					col -= 1
+			elif col == 0:
+				rand = random.randint(0, 2)
+				if rand == 0:
+					row -= 1
+				elif rand == 1:
+					row += 1
+				else:
+					col += 1
+			elif row == 0:
+				rand = random.randint(0, 2)
+				if rand == 0:
+					col -= 1
+				elif rand == 1:
+					col += 1
+				else:
+					row += 1
+			elif col == self.gridSize -1:
+				rand = random.randint(0, 2)
+				if rand == 0:
+					row -= 1
+				elif rand == 1:
+					row += 1
+				else:
+					col -= 1
+			elif row == self.gridSize -1:
+				rand = random.randint(0, 2)
+				if rand == 0:
+					col -= 1
+				elif rand == 1:
+					col += 1
+				else:
+					row -= 1
+			else:
+				rand = random.randint(0, 3)
+				if rand == 0:
+					col -= 1
+				elif rand == 1:
+					col += 1
+				elif rand == 2:
+					row -= 1
+				else:
+					row += 1
+
+			if playerButtonTiles[row][col].ship != None:
+				self.AIFoundShip = True
+				self.AIrow = row
+				self.AIcol = col
+			else:
+				self.AIFoundShip = False
+			return playerButtonTiles[row][col]
+
+		else:
+			row = random.randint(0, self.gridSize-1)
+			col = random.randint(0, self.gridSize-1)
+
+			if playerButtonTiles[row][col].ship != None:
+				self.AIrow = row
+				self.AIcol = col
+				self.AIFoundShip = True
+			else:
+				self.AIFoundShip = False
+
+			return playerButtonTiles[row][col]
+
 
 	def makeHardMove(self, playerButtonTiles):
 		row = 0
