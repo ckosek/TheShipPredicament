@@ -184,12 +184,12 @@ class GameTile:
 			new_surface = pg.display.set_mode((0,0),pg.FULLSCREEN)
 			pg.event.clear()
 			font = pg.font.SysFont("none", 24)
-			if self.playerNumber == 1:
+			if self.playerNumber == 2:
 				text = font.render("Player 2 ship destroyed!", True, text_color)
 				taunts = ["'You're a natural'", "'Easiest kill of my life!'", "'Roger, looks like we got a code E-Z.'", 
 					"'Are you even trying?'", "'Oops, did I do that?'", "'Was that ship made of paper?'"]
 				text2 = font.render(taunts[random.randint(0, 5)], True, text_color)
-			if self.playerNumber == 2:
+			if self.playerNumber == 1:
 				text = font.render("Player 1 ship destroyed!", True, text_color)
 				taunts = ["'That was easy.'", "'Supreme Leader South will love that'", "'RIP Jack Sparrow'", "'FRESH MEAT!'", 
 					"'This predicament will be over in no time'", "'We live in a society'" ]
@@ -232,9 +232,9 @@ class Player:
 			temp = []
 			for j in range(grid_size):
 				if self.playerNumber == 1:
-					temp.append(GameTile(int((w/2) - (24*5 + 24*grid_size)) + 24*i, int(h/3) + 24*j, 24, 24, 1, self.surface))
+					temp.append(GameTile(int((w/2) - (24*5 + 24*grid_size)) + 24*i, int(h/3) + 24*j, 24, 24, self.playerNumber, self.surface))
 				else:
-					temp.append(GameTile(int((w/2) + (24*5 + 24*grid_size)) - 24*i - 24, int(h/3) + 24*j, 24, 24, 1, self.surface))
+					temp.append(GameTile(int((w/2) + (24*5 + 24*grid_size)) - 24*i - 24, int(h/3) + 24*j, 24, 24, self.playerNumber, self.surface))
 
 			self.buttonTiles.append(temp)
 		self.distributeShips(grid_size)
