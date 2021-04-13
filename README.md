@@ -20,3 +20,15 @@ Grid Sizes: 7x7, 10x10, 15x15
 Mouse is used for shot selection inside the Game grid.
 To make sure the game is running as intended the game should be completed on all ships being destroyed and pass to a end game menu.
 All gamemodes and options should be selectable inside the game as well.
+
+Credits:
+
+	Sound Effects:
+			Collection of effects: https://www.the3rdsequence.com/soundb/
+			Applause: https://mixkit.co/free-sound-effects/applause/
+	Animations:
+			Fire: https://www.animatedimages.org/img-animated-fire-image-0377-49423.htm
+			Explosion: https://gifer.com/en/3IsK
+			Splash: https://thumbs.gfycat.com/YellowishLateAlligatorsnappingturtle.webp
+	Pictures:
+			Ship: https://www.wallpaperflare.com/warships-uss-new-jersey-bb-62-battleship-wallpaper-glaaz 
